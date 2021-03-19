@@ -33,8 +33,8 @@ class QuantumInternetNetwork(ABC):
         self['quantum_network_status'] = quantum_network
 
     def run(self,
-            state: Dict,
-            action: Tuple) -> Union[List[List[float]], Dict]:
+            state: List[List[float]],
+            action: Tuple) -> Union[List[List[float]], float]:
         """Execute the policy with selected Environement for given State and Action.
 
         Args:
@@ -47,7 +47,7 @@ class QuantumInternetNetwork(ABC):
             ValueError: If the State or the Action has not been provided
         """
         if state is None or action is None:
-            raise ValueError("A State and a Action "
+            raise ValueError("A State and an Action "
                             "must be supplied to run the environement.")
         return self._run()
 
