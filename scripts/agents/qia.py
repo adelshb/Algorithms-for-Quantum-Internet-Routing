@@ -11,7 +11,7 @@
 # that they have been altered from the originals.
 
 """
-This module implements the abstract base class for quantum internet network modules.
+This module implements the abstract base class for quantum internet agent modules.
 """
 
 from abc import ABC, abstractmethod
@@ -20,7 +20,7 @@ from typing import Union, Dict, Optional, Tuple, List
 
 class QuantumInternetNetwork(ABC):
     """
-    Base class for Quantum Internet Network.
+    Base class for Quantum Internet Agents.
 
     This method should initialize the module and use an exception if a component of the module is available.
     """
@@ -34,20 +34,19 @@ class QuantumInternetNetwork(ABC):
 
     def run(self,
             state: List[List[float]],
-            action: Tuple) -> Union[List[List[float]], float]:
-        """Execute the policy with selected Environement for given State and Action.
+            reward: float) -> Union[List[List[float]], float]:
+        """Generate action with the selected policy.
 
         Args:
             state: State before the Action.
-            action: Action decided by the policy.
+            reward: Reward for the Agent.
         Returns:
-            state_end: State an environement.
-            reward: reward for the Agent.
+            action: Action decided by the policy.
         Raises:
             ValueError: If the State or the Action has not been provided
         """
-        if state is None or action is None:
-            raise ValueError("A State and an Action "
+        if state is None or reward is None:
+            raise ValueError("A State and an Reward "
                             "must be supplied to run the environement.")
         return self._run()
 
