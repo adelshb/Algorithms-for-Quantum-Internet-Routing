@@ -32,11 +32,6 @@ class QuantumInternetNetwork(ABC):
         self['quantum_init_network'] = quantum_network
         self['quantum_network_status'] = quantum_network
 
-    @abstractmethod
-    def refresh(self) -> None:
-        """ Refresh the quantum network to its initial condition."""
-        self.quantum_network_status = self.quantum_init_network
-
     def run(self, action: int):
         """Execute the policy with selected Environement for given State and Action.
 
