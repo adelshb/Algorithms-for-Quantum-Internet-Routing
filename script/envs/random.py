@@ -39,7 +39,7 @@ class RandomEnvironement(QuantumInternetNetwork):
         self._state = quantum_network
         self._sender, self._reciever = self.gsr_event() 
 
-    def reward(self, refresh) -> float:
+    def compute_reward(self, refresh) -> float:
         """ Compute the reward.
         Returns:
             The reward.
@@ -96,7 +96,7 @@ class RandomEnvironement(QuantumInternetNetwork):
             return result
 
         # Compute the reward.
-        rew = self.reward(refresh)
+        rew = self.compute_reward(refresh)
 
         # Check if the sender reached the reciever.
         if self._sender == self._reciever:

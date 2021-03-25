@@ -55,7 +55,7 @@ class QuantumInternetNetwork(ABC):
     @property
     def classical_network(self) -> Optional[List[List[float]]]:
         """ Returns classical network. """
-        return self.get('classical_network')
+        return self.classical_network
 
     @classical_network.setter
     def classical_network(self, value: List[List[float]]) -> None:
@@ -65,7 +65,7 @@ class QuantumInternetNetwork(ABC):
     @property
     def quantum_network_status(self) -> Optional[List[List[float]]]:
         """ Returns current quantum network status. """
-        return self.get('quantum_network_status')
+        return self.quantum_network_status
 
     @quantum_network_status.setter
     def quantum_network_status(self, value: List[List[float]]) -> None:
@@ -75,7 +75,7 @@ class QuantumInternetNetwork(ABC):
     @property
     def quantum_init_network(self) -> Optional[List[List[float]]]:
         """ Returns initial quantum network. """
-        return self.get('quantum_init_network')
+        return self.quantum_init_network
 
     @quantum_init_network.setter
     def quantum_init_network(self, value: List[List[float]]) -> None:
@@ -91,7 +91,7 @@ class QuantumInternetNetworkResult(ABC):
     @property
     def state(self) -> object:
         """ return current state"""
-        return self.get('state')
+        return self.state
 
     @state.setter
     def state(self, value: object) -> None:
@@ -101,7 +101,7 @@ class QuantumInternetNetworkResult(ABC):
     @property
     def reward(self) -> float:
         """ return reward"""
-        return self.get('reward')
+        return self.reward
 
     @reward.setter
     def state(self, value: float) -> None:
@@ -111,7 +111,7 @@ class QuantumInternetNetworkResult(ABC):
     @property
     def sender(self) -> int:
         """ return sender's index"""
-        return self.get('sender')
+        return self.sender
 
     @sender.setter
     def sender(self, value: int) -> None:
@@ -121,7 +121,7 @@ class QuantumInternetNetworkResult(ABC):
     @property
     def reciever(self) -> object:
         """ return reciever's index"""
-        return self.get('reciever')
+        return self.reciever
 
     @state.setter
     def reciever(self, value: object) -> None:
