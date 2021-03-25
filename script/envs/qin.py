@@ -32,13 +32,15 @@ class QuantumInternetNetwork(ABC):
         self['quantum_init_network'] = quantum_network
         self['quantum_network_status'] = quantum_network
 
-    def run(self,
-            state: List[List[float]],
-            action: Tuple) -> Union[List[List[float]], float]:
+    @abstractmethod
+    def refresh(self) -> None:
+        """ Refresh the quantum network to its initial condition."""
+        self.quantum_network_status = self.quantum_init_network
+
+    def run(self, action: int):
         """Execute the policy with selected Environement for given State and Action.
 
         Args:
-            state: State before the Action.
             action: Action decided by the policy.
         Returns:
             state_end: State an environement.
@@ -84,3 +86,51 @@ class QuantumInternetNetwork(ABC):
     def quantum_init_network(self, value: List[List[float]]) -> None:
         """ Sets initial quantum network. """
         self['quantum_init_network'] = value
+
+class QuantumInternetNetworkResult(ABC):
+    """ QuantumInternetNetworkResult."""
+
+    def __init__(self):
+        super().__init__()
+
+    @property
+    def state(self) -> object:
+        """ return current state"""
+        return self.get('state')
+
+    @state.setter
+    def state(self, value: object) -> None:
+        """ set estimations values """
+        self['state'] = value
+
+    @property
+    def reward(self) -> float:
+        """ return reward"""
+        return self.get('reward')
+
+    @reward.setter
+    def state(self, value: float) -> None:
+        """ set reward value """
+        self['reward'] = value
+
+    @property
+    def sender(self) -> int:
+        """ return sender's index"""
+        return self.get('sender')
+
+    @sender.setter
+    def sender(self, value: int) -> None:
+        """ set sender's index"""
+        self['sender'] = value
+
+    @property
+    def reciever(self) -> object:
+        """ return reciever's index"""
+        return self.get('reciever')
+
+    @state.setter
+    def reciever(self, value: object) -> None:
+        """ set reciever's index"""
+        self['reciever'] = value
+
+    
