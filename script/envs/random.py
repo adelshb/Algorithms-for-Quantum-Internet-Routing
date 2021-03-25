@@ -56,7 +56,7 @@ class RandomEnvironement(QuantumInternetNetwork):
             Vertices label of the sender and reciver.
         """
 
-        nodes = self._state.nodes
+        nodes = list(self._state.nodes)
         s = random.choice(nodes)
         r = random.choice(nodes.remove(s))
         return s, r
