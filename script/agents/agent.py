@@ -11,45 +11,49 @@
 # that they have been altered from the originals.
 
 """
-This module implements the abstract base class for quantum internet network modules.
+This module implements the abstract base class for agent modules.
 """
 
 from abc import ABC, abstractmethod
 from typing import Union, Dict, Optional, Tuple, List
 
 
-class QuantumInternetNetwork(ABC):
+class Agent(ABC):
     """
-    Base class for Quantum Internet Network.
+    Base class for Agent.
 
     This method should initialize the module and use an exception if a component of the module is available.
     """
     @abstractmethod
     def __init__(self,
                  physical_network: List[List[float]],
-                 virtual_network: List[List[float]]) -> None:
+                 virtual_network: List[List[float]],
+                 sender: int,
+                 reciever: int) -> None:
         self['physical_network'] = physical_network
         self['virtual_init_network'] = virtual_network
         self['virtual_network_status'] = virtual_network
+        self['sender'] = sender
+        self['reciever'] = reciever
 
-    def run(self, action: int):
-        """Execute the evolution with selected Environement for given State and Action.
-
+    def run(self, state: object, sender: int, reciever: int):
+        """Execute the policy with selected Environement for given State and Action.
         Args:
-            action: Action decided by the policy.
+            state: current state of the virtual network.
+            sender: sender node.
+            reciever: reciever node.
         Returns:
-            state_end: State an environement.
-            reward: reward for the Agent.
+            action: action decided by the Agent
         Raises:
-            ValueError: If the Action has not been provided
+            ValueError: If the State or the Action has not been provided
         """
-        if action is None:
-            raise ValueError("An Action "
-                            "must be supplied to run the environement.")
-        return self._run(action)
+        if sender is None or reciever is None:
+            raise ValueError("A sender and/or a reciever"
+                            "must be supplied to run the agent.")
+        return self._run(state, sender, reciever)
 
     @abstractmethod
-    def _run(self, action: int) -> Dict:
+    def _run(self, state: object, sender: int, reciever: int) -> int:
         raise NotImplementedError()
 
     @property
@@ -81,51 +85,3 @@ class QuantumInternetNetwork(ABC):
     def virtual_init_network(self, value: List[List[float]]) -> None:
         """ Sets initial virtual network. """
         self.virtual_init_network = value
-
-class QuantumInternetNetworkResult(ABC):
-    """ QuantumInternetNetworkResult."""
-
-    def __init__(self):
-        super().__init__()
-
-    @property
-    def state(self) -> object:
-        """ return current state"""
-        return self._state
-
-    @state.setter
-    def state(self, value: object) -> None:
-        """ set estimations values """
-        self._state = value
-
-    @property
-    def reward(self) -> float:
-        """ return reward"""
-        return self._reward
-
-    @reward.setter
-    def reward(self, value: float) -> None:
-        """ set reward value """
-        self._reward = value
-
-    @property
-    def sender(self) -> int:
-        """ return sender's index"""
-        return self._sender
-
-    @sender.setter
-    def sender(self, value: int) -> None:
-        """ set sender's index"""
-        self._sender = value
-
-    @property
-    def reciever(self) -> object:
-        """ return reciever's index"""
-        return self._reciever
-
-    @state.setter
-    def reciever(self, value: object) -> None:
-        """ set reciever's index"""
-        self._reciever = value
-
-    
