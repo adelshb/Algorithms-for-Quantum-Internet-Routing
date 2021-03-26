@@ -86,8 +86,8 @@ class QuantumInternetNetworkResult(ABC):
     """ QuantumInternetNetworkResult."""
 
     def __init__(self):
-        self.state = None
-        #super().__init__()
+        #self.state = None
+        super().__init__()
 
     @property
     def state(self) -> object:
@@ -107,7 +107,7 @@ class QuantumInternetNetworkResult(ABC):
     @reward.setter
     def reward(self, value: float) -> None:
         """ set reward value """
-        self['reward'] = value
+        self.reward = value
 
     @property
     def sender(self) -> int:
@@ -117,7 +117,7 @@ class QuantumInternetNetworkResult(ABC):
     @sender.setter
     def sender(self, value: int) -> None:
         """ set sender's index"""
-        self['sender'] = value
+        self.sender = value
 
     @property
     def reciever(self) -> object:
@@ -127,6 +127,6 @@ class QuantumInternetNetworkResult(ABC):
     @state.setter
     def reciever(self, value: object) -> None:
         """ set reciever's index"""
-        self['reciever'] = value
+        self.reciever = value
 
     

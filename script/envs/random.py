@@ -71,14 +71,7 @@ class RandomEnvironement(QuantumInternetNetwork):
         # Check if there is a current sender and reciever. Likely to be used as initialization.
         if self._sender == None or self._reciever == None:
             self._sender, self._reciever = self.gsr_event()
-
-            result = QuantumInternetNetworkResult()
-            result.state = self._state
-            result.reward = None 
-            result.sender = self._sender
-            result.reciever = self._reciever
-
-            return result
+            raise Exception('No sender and/or reciever')
         
         # Evolution to the new state.
         if self._state.has_edge(self._sender, action):
@@ -88,14 +81,7 @@ class RandomEnvironement(QuantumInternetNetwork):
             self.refresh()
             refresh = True
         else:
-
-            result = QuantumInternetNetworkResult()
-            result.state = self._state
-            result.reward = None 
-            result.sender = self._sender
-            result.reciever = self._reciever
-
-            return result
+            raise Exception('Selected action not possible. There is no edge between the two nodes')
 
         # Compute the reward.
         rew = self.compute_reward(refresh)
@@ -103,7 +89,6 @@ class RandomEnvironement(QuantumInternetNetwork):
         # Check if the sender reached the reciever.
         if self._sender == self._reciever:
             self._sender, self._reciever = self.gsr_event() 
-
 
         result = QuantumInternetNetworkResult()
         result.state = self._state
