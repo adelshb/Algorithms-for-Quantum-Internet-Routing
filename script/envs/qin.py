@@ -92,41 +92,41 @@ class QuantumInternetNetworkResult(ABC):
     @property
     def state(self) -> object:
         """ return current state"""
-        return self.state
+        return self._state
 
     @state.setter
     def state(self, value: object) -> None:
         """ set estimations values """
-        self.state = value
+        self._state = value
 
     @property
     def reward(self) -> float:
         """ return reward"""
-        return self.reward
+        return self._reward
 
     @reward.setter
     def reward(self, value: float) -> None:
         """ set reward value """
-        self.reward = value
+        self._reward = value
 
     @property
     def sender(self) -> int:
         """ return sender's index"""
-        return self.sender
+        return self._sender
 
     @sender.setter
     def sender(self, value: int) -> None:
         """ set sender's index"""
-        self.sender = value
+        self._sender = value
 
     @property
     def reciever(self) -> object:
         """ return reciever's index"""
-        return self.reciever
+        return self._reciever
 
     @state.setter
     def reciever(self, value: object) -> None:
         """ set reciever's index"""
-        self.reciever = value
+        self._reciever = value
 
     
