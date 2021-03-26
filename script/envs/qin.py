@@ -43,13 +43,13 @@ class QuantumInternetNetwork(ABC):
         Raises:
             ValueError: If the State or the Action has not been provided
         """
-        if state is None or action is None:
-            raise ValueError("A State and an Action "
+        if action is None:
+            raise ValueError("An Action "
                             "must be supplied to run the environement.")
-        return self._run()
+        return self._run(action)
 
     @abstractmethod
-    def _run(self) -> Dict:
+    def _run(self, action: int) -> Dict:
         raise NotImplementedError()
 
     @property
@@ -86,7 +86,8 @@ class QuantumInternetNetworkResult(ABC):
     """ QuantumInternetNetworkResult."""
 
     def __init__(self):
-        super().__init__()
+        self.state = None
+        #super().__init__()
 
     @property
     def state(self) -> object:
@@ -96,7 +97,7 @@ class QuantumInternetNetworkResult(ABC):
     @state.setter
     def state(self, value: object) -> None:
         """ set estimations values """
-        self['state'] = value
+        self.state = value
 
     @property
     def reward(self) -> float:
@@ -104,7 +105,7 @@ class QuantumInternetNetworkResult(ABC):
         return self.reward
 
     @reward.setter
-    def state(self, value: float) -> None:
+    def reward(self, value: float) -> None:
         """ set reward value """
         self['reward'] = value
 

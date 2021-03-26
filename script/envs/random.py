@@ -32,8 +32,9 @@ class RandomEnvironement(QuantumInternetNetwork):
             classical_network: classical network
             quantum_network: initial quantum network
         """
-
+        
         # Get parameters
+        print("Loading initial parameters...")
         self._classical_network = classical_network
         self._quantum_network = quantum_network
         self._state = quantum_network
@@ -58,7 +59,8 @@ class RandomEnvironement(QuantumInternetNetwork):
 
         nodes = list(self._state.nodes)
         s = random.choice(nodes)
-        r = random.choice(nodes.remove(s))
+        nodes.remove(s)
+        r = random.choice(nodes)
         return s, r
 
     def _run(self,
