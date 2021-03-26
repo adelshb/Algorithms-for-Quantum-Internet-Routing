@@ -26,11 +26,11 @@ class QuantumInternetNetwork(ABC):
     """
     @abstractmethod
     def __init__(self,
-                 classical_network: List[List[float]],
-                 quantum_network: List[List[float]]) -> None:
-        self['classical_network'] = classical_network
-        self['quantum_init_network'] = quantum_network
-        self['quantum_network_status'] = quantum_network
+                 physical_network: List[List[float]],
+                 virtual_network: List[List[float]]) -> None:
+        self['physical_network'] = physical_network
+        self['virtual_init_network'] = virtual_network
+        self['virtual_network_status'] = virtual_network
 
     def run(self, action: int):
         """Execute the policy with selected Environement for given State and Action.
@@ -53,40 +53,39 @@ class QuantumInternetNetwork(ABC):
         raise NotImplementedError()
 
     @property
-    def classical_network(self) -> Optional[List[List[float]]]:
-        """ Returns classical network. """
-        return self.classical_network
+    def physical_network(self) -> Optional[List[List[float]]]:
+        """ Returns physical network. """
+        return self.physical_network
 
-    @classical_network.setter
-    def classical_network(self, value: List[List[float]]) -> None:
-        """ Sets classical network. """
-        self['classical_network'] = value
-
-    @property
-    def quantum_network_status(self) -> Optional[List[List[float]]]:
-        """ Returns current quantum network status. """
-        return self.quantum_network_status
-
-    @quantum_network_status.setter
-    def quantum_network_status(self, value: List[List[float]]) -> None:
-        """ Sets current quantum network status. """
-        self['quantum_network_status'] = value
+    @physical_network.setter
+    def physical_network(self, value: List[List[float]]) -> None:
+        """ Sets physical network. """
+        self['physical_network'] = value
 
     @property
-    def quantum_init_network(self) -> Optional[List[List[float]]]:
-        """ Returns initial quantum network. """
-        return self.quantum_init_network
+    def virtual_network_status(self) -> Optional[List[List[float]]]:
+        """ Returns current virtual network status. """
+        return self.virtual_network_status
 
-    @quantum_init_network.setter
-    def quantum_init_network(self, value: List[List[float]]) -> None:
-        """ Sets initial quantum network. """
-        self['quantum_init_network'] = value
+    @virtual_network_status.setter
+    def virtual_network_status(self, value: List[List[float]]) -> None:
+        """ Sets current virtual network status. """
+        self['virtual_network_status'] = value
+
+    @property
+    def virtual_init_network(self) -> Optional[List[List[float]]]:
+        """ Returns initial virtual network. """
+        return self.virtual_init_network
+
+    @virtual_init_network.setter
+    def virtual_init_network(self, value: List[List[float]]) -> None:
+        """ Sets initial virtual network. """
+        self['virtual_init_network'] = value
 
 class QuantumInternetNetworkResult(ABC):
     """ QuantumInternetNetworkResult."""
 
     def __init__(self):
-        #self.state = None
         super().__init__()
 
     @property

@@ -24,20 +24,20 @@ class RandomEnvironement(QuantumInternetNetwork):
     """Random Events Environement for Quantum Internet Network."""
 
     def __init__(self,
-                 classical_network: object,
-                 quantum_network: object,
+                 physical_network: object,
+                 virtual_network: object,
                  ) -> None:
         """
         Args:
-            classical_network: classical network
-            quantum_network: initial quantum network
+            physical_network: classical network
+            virtual_network: initial quantum network
         """
         
         # Get parameters
         print("Loading initial parameters...")
-        self._classical_network = classical_network
-        self._quantum_network = quantum_network
-        self._state = quantum_network
+        self._physical_network = physical_network
+        self._virtual_network = virtual_network
+        self._state = virtual_network
         self._sender, self._reciever = self.gsr_event() 
 
     def compute_reward(self, refresh) -> float:
@@ -77,7 +77,7 @@ class RandomEnvironement(QuantumInternetNetwork):
         if self._state.has_edge(self._sender, action):
             self._state.remove_edge(self._sender, action)
             self._sender = action
-        elif self._quantum_network.has_edge(self._sender, action):
+        elif self._virtual_network.has_edge(self._sender, action):
             self.refresh()
             refresh = True
         else:
