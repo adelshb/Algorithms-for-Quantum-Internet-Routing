@@ -26,15 +26,10 @@ class Agent(ABC):
     """
     @abstractmethod
     def __init__(self,
-                 physical_network: List[List[float]],
-                 virtual_network: List[List[float]],
-                 sender: int,
-                 reciever: int) -> None:
-        self['physical_network'] = physical_network
-        self['virtual_init_network'] = virtual_network
-        self['virtual_network_status'] = virtual_network
-        self['sender'] = sender
-        self['reciever'] = reciever
+                 physical_network: object,
+                 virtual_network: object) -> None:
+        self._physical_network = physical_network
+        self._virtual_init_network = virtual_network
 
     def run(self, state: object, sender: int, reciever: int):
         """Execute the policy with selected Environement for given State and Action.
@@ -59,29 +54,19 @@ class Agent(ABC):
     @property
     def physical_network(self) -> Optional[List[List[float]]]:
         """ Returns physical network. """
-        return self.physical_network
+        return self._physical_network
 
     @physical_network.setter
     def physical_network(self, value: List[List[float]]) -> None:
         """ Sets physical network. """
-        self.physical_network = value
-
-    @property
-    def virtual_network_status(self) -> Optional[List[List[float]]]:
-        """ Returns current virtual network status. """
-        return self.virtual_network_status
-
-    @virtual_network_status.setter
-    def virtual_network_status(self, value: List[List[float]]) -> None:
-        """ Sets current virtual network status. """
-        self.virtual_network_status = value
+        self._physical_network = value
 
     @property
     def virtual_init_network(self) -> Optional[List[List[float]]]:
         """ Returns initial virtual network. """
-        return self.virtual_init_network
+        return self._virtual_init_network
 
     @virtual_init_network.setter
     def virtual_init_network(self, value: List[List[float]]) -> None:
         """ Sets initial virtual network. """
-        self.virtual_init_network = value
+        self._virtual_init_network = value

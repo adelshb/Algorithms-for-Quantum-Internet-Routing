@@ -18,7 +18,6 @@ from typing import List, Dict
 import random
 
 from script.envs.qin import QuantumInternetNetwork, QuantumInternetNetworkResult
-#from envs_utils import active_nodes
 
 class RandomEnvironement(QuantumInternetNetwork):
     """Random Events Environement for Quantum Internet Network."""
@@ -34,7 +33,6 @@ class RandomEnvironement(QuantumInternetNetwork):
         """
         
         # Get parameters
-        print("Loading initial parameters...")
         self._physical_network = physical_network
         self._virtual_network = virtual_network
         self._state = virtual_network

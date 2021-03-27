@@ -17,7 +17,6 @@ This module implements the abstract base class for quantum internet network modu
 from abc import ABC, abstractmethod
 from typing import Union, Dict, Optional, Tuple, List
 
-
 class QuantumInternetNetwork(ABC):
     """
     Base class for Quantum Internet Network.
@@ -55,32 +54,32 @@ class QuantumInternetNetwork(ABC):
     @property
     def physical_network(self) -> Optional[List[List[float]]]:
         """ Returns physical network. """
-        return self.physical_network
+        return self._physical_network
 
     @physical_network.setter
     def physical_network(self, value: List[List[float]]) -> None:
         """ Sets physical network. """
-        self.physical_network = value
+        self._physical_network = value
 
     @property
     def virtual_network_status(self) -> Optional[List[List[float]]]:
         """ Returns current virtual network status. """
-        return self.virtual_network_status
+        return self._virtual_network_status
 
     @virtual_network_status.setter
     def virtual_network_status(self, value: List[List[float]]) -> None:
         """ Sets current virtual network status. """
-        self.virtual_network_status = value
+        self._virtual_network_status = value
 
     @property
     def virtual_init_network(self) -> Optional[List[List[float]]]:
         """ Returns initial virtual network. """
-        return self.virtual_init_network
+        return self._virtual_init_network
 
     @virtual_init_network.setter
     def virtual_init_network(self, value: List[List[float]]) -> None:
         """ Sets initial virtual network. """
-        self.virtual_init_network = value
+        self._virtual_init_network = value
 
 class QuantumInternetNetworkResult(ABC):
     """ QuantumInternetNetworkResult."""
