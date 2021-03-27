@@ -20,7 +20,11 @@ import random
 from script.agents.agent import Agent
 
 class RandomNeighborsAgent(Agent):
-    """Agent that selects a random neighbor of the sender. If the reciever and sender are neighboor, the reciever will be picked"""
+    """
+    Agent that selects a random neighbor of the sender. 
+    If the reciever and sender are neighboors, the reciever will be picked. 
+    If the sender has no neighbor at the current state, a random neighboor
+    """
 
     def __init__(self,
                  physical_network: object,
@@ -42,8 +46,18 @@ class RandomNeighborsAgent(Agent):
             The action.
         """
         
+        # Collect sender's neighbors on current state
         neighbors = list(state.neighbors(sender))
-        if reciever in neighbors:
+
+        if neighbors is None:
+            # If the sender has no neighbor on the current state collect sender's neighbors on initial virtual netwok
+            neighbors = list(self._virtual_network.neighbors(sender))
+            if neighbors is None:
+                raise Exception('The sender has no neighbor.')
+            else:
+                # Pick a random neighbor from initial virtual network. This will cause a refresh of one/some/all link(s).
+                return random.choice(neighbors)
+        elif reciever in neighbors:
             return reciever
         else:
             return random.choice(neighbors)

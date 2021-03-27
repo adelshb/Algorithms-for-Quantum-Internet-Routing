@@ -32,9 +32,12 @@ _available_agents = [
 def main(args):
 
     n = 10
-    m = 2*n
+    dth = 2
+
     C = nx.cycle_graph(n)
-    Q = nx.nx.gnm_random_graph(n,m)
+    Q = nx.Graph()
+    # Add edges up to distance dth in virtual network
+    Q.add_edges_from([(i, (i + d) %n ) for i in range(n) for d in range(1, dth+1)])
 
     # Initialize the Environement, the different parameters and the Agent
     env = RandomEnvironement(physical_network = C, 
