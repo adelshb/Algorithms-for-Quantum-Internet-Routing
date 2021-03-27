@@ -49,10 +49,11 @@ class RandomNeighborsAgent(Agent):
         # Collect sender's neighbors on current state
         neighbors = list(state.neighbors(sender))
 
-        if neighbors is None:
+        if not neighbors:
             # If the sender has no neighbor on the current state collect sender's neighbors on initial virtual netwok
             neighbors = list(self._virtual_network.neighbors(sender))
-            if neighbors is None:
+            if not neighbors:
+                print(sender)
                 raise Exception('The sender has no neighbor.')
             else:
                 # Pick a random neighbor from initial virtual network. This will cause a refresh of one/some/all link(s).

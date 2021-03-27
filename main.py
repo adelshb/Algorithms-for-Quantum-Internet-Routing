@@ -38,7 +38,8 @@ def main(args):
     Q = nx.Graph()
     # Add edges up to distance dth in virtual network
     Q.add_edges_from([(i, (i + d) %n ) for i in range(n) for d in range(1, dth+1)])
-
+    print(Q.nodes())
+    print(Q.edges())
     # Initialize the Environement, the different parameters and the Agent
     env = RandomEnvironement(physical_network = C, 
                                 virtual_network = Q)
@@ -57,7 +58,7 @@ def main(args):
 
         # State evolution and compute reward
         result = env.run(action= action)
-
+        print(env._virtual_network)
         # Update parameters
         state = result.state
         sender = result.sender
