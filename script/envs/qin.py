@@ -28,9 +28,9 @@ class QuantumInternetNetwork(ABC):
     def __init__(self,
                  physical_network: List[List[float]],
                  virtual_network: List[List[float]]) -> None:
-        self['physical_network'] = physical_network
-        self['virtual_init_network'] = virtual_network
-        self['virtual_network_status'] = virtual_network
+        self._physical_network = physical_network
+        self._virtual_init_network = virtual_network
+        self._virtual_network_status = virtual_network
 
     def run(self, action: int):
         """Execute the evolution with selected Environement for given State and Action.
