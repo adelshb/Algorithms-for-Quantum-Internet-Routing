@@ -38,7 +38,7 @@ _available_networks = [
 def main(args):
 
     # Generate cycle network
-    C, Q = cycle_net(n= args.network_param.n, dth = args.network_param.dth)
+    C, Q = cycle_net(n= args.network_param["n"], dth = args.network_param["dth"])
 
     # Initialize the Environement, the different parameters and the Agent
     env = RandomEnvironement(physical_network = C, 
