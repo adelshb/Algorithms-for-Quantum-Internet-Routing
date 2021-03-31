@@ -35,10 +35,10 @@ class RandomEnvironement(QuantumInternetNetwork):
         # Get parameters
         self._physical_network = physical_network
         self._virtual_network = virtual_network
-        self._state = virtual_network
+        self._state = virtual_network.copy()
         self._sender, self._reciever = self.gsr_event() 
 
-    def compute_reward(self, refresh) -> float:
+    def compute_reward(self, refresh, success) -> float:
         """ Compute the reward.
         Returns:
             The reward.
@@ -46,6 +46,8 @@ class RandomEnvironement(QuantumInternetNetwork):
 
         if refresh:
             return -100
+        elif success:
+            return 10
         else:
             return 1
 
@@ -65,6 +67,7 @@ class RandomEnvironement(QuantumInternetNetwork):
         action: int) ->  Dict:
 
         refresh = False
+        success = True
 
         # Check if there is a current sender and reciever. Likely to be used as initialization.
         if self._sender == None or self._reciever == None:
@@ -76,20 +79,21 @@ class RandomEnvironement(QuantumInternetNetwork):
             self._state.remove_edge(self._sender, action)
             self._sender = action
         elif self._virtual_network.has_edge(self._sender, action):
-            self.refresh()
+            self._state = virtual_network.copy()
             refresh = True
         else:
             raise Exception('Selected action not possible. There is no edge between the two nodes')
 
-        # Compute the reward.
-        rew = self.compute_reward(refresh)
-
         # Check if the sender reached the reciever.
         if self._sender == self._reciever:
-            self._sender, self._reciever = self.gsr_event() 
+            self._sender, self._reciever = self.gsr_event()
+            success = True
+
+        # Compute the reward.
+        rew = self.compute_reward(refresh, success)
 
         result = QuantumInternetNetworkResult()
-        result.state = self._state
+        result.state = self._state.copy()
         result.reward = rew 
         result.sender = self._sender
         result.reciever = self._reciever

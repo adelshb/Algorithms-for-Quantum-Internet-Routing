@@ -18,8 +18,8 @@ import os
 
 import networkx as nx
 
-from script.envs.random import RandomEnvironement
-from script.agents.random import RandomNeighborsAgent
+from envs.random import RandomEnvironement
+from agents.random import RandomNeighborsAgent
 
 _available_environements = [
     "random",
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     parser.add_argument("--virtual_network", type=int, default=10)
 
     # Experiments
-    parser.add_argument("--epochs", type=int, default=200)
+    parser.add_argument("--epochs", type=int, default=20)
 
     # Save data
     parser.add_argument("--path", nargs=1, default=os.getcwd())

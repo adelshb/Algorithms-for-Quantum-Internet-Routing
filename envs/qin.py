@@ -29,7 +29,7 @@ class QuantumInternetNetwork(ABC):
                  virtual_network: List[List[float]]) -> None:
         self._physical_network = physical_network
         self._virtual_init_network = virtual_network
-        self._virtual_network_status = virtual_network
+        self._virtual_network_state = virtual_network.copy()
 
     def run(self, action: int):
         """Execute the evolution with selected Environement for given State and Action.
@@ -62,14 +62,14 @@ class QuantumInternetNetwork(ABC):
         self._physical_network = value
 
     @property
-    def virtual_network_status(self) -> Optional[List[List[float]]]:
-        """ Returns current virtual network status. """
-        return self._virtual_network_status
+    def virtual_network_state(self) -> Optional[List[List[float]]]:
+        """ Returns current virtual network state. """
+        return self._virtual_network_state
 
-    @virtual_network_status.setter
-    def virtual_network_status(self, value: List[List[float]]) -> None:
-        """ Sets current virtual network status. """
-        self._virtual_network_status = value
+    @virtual_network_state.setter
+    def virtual_network_state(self, value: List[List[float]]) -> None:
+        """ Sets current virtual network state. """
+        self._virtual_network_state = value
 
     @property
     def virtual_init_network(self) -> Optional[List[List[float]]]:
