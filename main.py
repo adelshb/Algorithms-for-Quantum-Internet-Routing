@@ -35,9 +35,13 @@ def main(args):
     dth = 2
 
     C = nx.cycle_graph(n)
+    print("***** Physical Network *****")
+    print(C.nodes())
+    print(C.edges())
     Q = nx.Graph()
     # Add edges up to distance dth in virtual network
     Q.add_edges_from([(i, (i + d) %n ) for i in range(n) for d in range(1, dth+1)])
+    print("***** Virtual Network *****")
     print(Q.nodes())
     print(Q.edges())
     # Initialize the Environement, the different parameters and the Agent
@@ -47,7 +51,7 @@ def main(args):
     state = env._state
     sender = env._sender
     reciever = env._reciever
-
+    
     agent = RandomNeighborsAgent(physical_network = C, 
                                     virtual_network = Q)
 
@@ -55,15 +59,15 @@ def main(args):
     for __ in tqdm(range(args.epochs)):
         # Compute action through Agent's policy
         action = agent.run(state= state, sender= sender, reciever= reciever)
-
+        
         # State evolution and compute reward
         result = env.run(action= action)
-        print(env._virtual_network)
+        
         # Update parameters
         state = result.state
         sender = result.sender
         reciever = result.reciever
-
+        
         R += result.reward
 
     print("The accumulated reward is: ", R)
@@ -83,7 +87,7 @@ if __name__ == "__main__":
     parser.add_argument("--virtual_network", type=int, default=10)
 
     # Experiments
-    parser.add_argument("--epochs", type=int, default=20)
+    parser.add_argument("--epochs", type=int, default=200)
 
     # Save data
     parser.add_argument("--path", nargs=1, default=os.getcwd())

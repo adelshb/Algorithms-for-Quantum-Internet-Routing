@@ -122,8 +122,8 @@ class QuantumInternetNetworkResult(ABC):
         """ return reciever's index"""
         return self._reciever
 
-    @state.setter
-    def reciever(self, value: object) -> None:
+    @reciever.setter
+    def reciever(self, value: int) -> None:
         """ set reciever's index"""
         self._reciever = value
 
