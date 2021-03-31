@@ -15,11 +15,13 @@
 from argparse import ArgumentParser
 from tqdm import tqdm
 import os 
+import yaml
 
 import networkx as nx
 
-from envs.random import RandomEnvironement
+from environements.random import RandomEnvironement
 from agents.random import RandomNeighborsAgent
+from networks.cycle import cycle_net
 
 _available_environements = [
     "random",
@@ -29,29 +31,21 @@ _available_agents = [
     "random",
     ]
 
+_available_networks = [
+    "cycle",
+    ]
+
 def main(args):
 
-    n = 10
-    dth = 2
+    # Generate cycle network
+    C, Q = cycle_net(n= args.network_param.n, dth = args.network_param.dth)
 
-    C = nx.cycle_graph(n)
-    print("***** Physical Network *****")
-    print(C.nodes())
-    print(C.edges())
-    Q = nx.Graph()
-    # Add edges up to distance dth in virtual network
-    Q.add_edges_from([(i, (i + d) %n ) for i in range(n) for d in range(1, dth+1)])
-    print("***** Virtual Network *****")
-    print(Q.nodes())
-    print(Q.edges())
     # Initialize the Environement, the different parameters and the Agent
     env = RandomEnvironement(physical_network = C, 
                                 virtual_network = Q)
-
     state = env._state
     sender = env._sender
     reciever = env._reciever
-    
     agent = RandomNeighborsAgent(physical_network = C, 
                                     virtual_network = Q)
 
@@ -83,8 +77,8 @@ if __name__ == "__main__":
     parser.add_argument("--agent", type=str, default="random", choices=_available_agents)
 
     # Networks 
-    parser.add_argument("--physical_network", type=int, default=10)
-    parser.add_argument("--virtual_network", type=int, default=10)
+    parser.add_argument("--network", type=str, default="cycle", choices=_available_networks)
+    parser.add_argument("--network_param", type=yaml.load, default="{n: 10, dth: 2}")
 
     # Experiments
     parser.add_argument("--epochs", type=int, default=200)
