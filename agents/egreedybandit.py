@@ -74,8 +74,6 @@ class EGreedyBanditAgent(Agent):
         else:  
             return random.choice(neighbors)
 
-        return action
-
     def _run(self, state, sender, reciever, reward):
 
         if self._N > 0:

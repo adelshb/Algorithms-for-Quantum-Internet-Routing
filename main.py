@@ -94,7 +94,7 @@ if __name__ == "__main__":
 
     # Networks gE
     parser.add_argument("--network", type=str, default="cycle", choices=_available_networks)
-    parser.add_argument("--network_param", type=yaml.load, default="{n: 10, dth: 2}")
+    parser.add_argument("--network_param", type=yaml.load, default="{n: 5, dth: 1}")
 
     # Experiments
     parser.add_argument("--epochs", type=int, default=100)

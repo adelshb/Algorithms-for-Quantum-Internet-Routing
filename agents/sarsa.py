@@ -38,23 +38,24 @@ class SARSAAgent(Agent):
         self._physical_network = physical_network
         self._virtual_network = virtual_network
         self._edges = list(self._virtual_network.edges())
-        self._size = max(list(self._virtual_network.nodes())+ list(self._physical_network.nodes()))
+        self._size = max(list(self._virtual_network.nodes())+ list(self._physical_network.nodes()))+1
+        self._epsilon = epsilon
         self._alpha = alpha
         self._gamma = gamma
 
         # Initialize Q function
-        possible_states = sum([list(itertools.permutations( [0]*n + [1]*(self._size - n))) for n in range(self._size+1)])
+        n = len(self._edges)
+        possible_states = [tuple([int(j) for j in '{:0{}b}'.format(i, n)]) for i in range(2**n)]
         self._Q = {}
         for r in range(self._size):
-            Q[r] = {}
+            self._Q[r] = {}
             for s in range(self._size):
                 if s != r:
-                    Q[r][s]={}
-                    neigh = list(self._virtual_network.neighbors(s))
-                    for n in neigh:
-                        Q[r][s][n]={}
+                    self._Q[r][s]={}
+                    for n in list(self._virtual_network.neighbors(s)):
+                        self._Q[r][s][n]={}
                         for state in possible_states:
-                            Q[r][s][n][state]=0
+                            self._Q[r][s][n][state]=0
 
         # Initialize number of epochs
         self._N = 0
@@ -75,6 +76,7 @@ class SARSAAgent(Agent):
         Returns:
             The action.
         """
+
         # Collect sender's neighbors on current state
         neighbors = list(state.neighbors(sender))
 
@@ -89,25 +91,22 @@ class SARSAAgent(Agent):
             ind = self.Qindex(state)
             Q = {}
             for n in neighbors:
-                Q[n] =  Q[reciever][sender][n][ind]
-            tup = max(Q)
-            if sender == tup[0]:
-                return tup[1]
-            else:
-                return tup[0]
+                Q[n] =  self._Q[reciever][sender][n][ind]
+            return max(Q)
         else:  
             return random.choice(neighbors)
 
-        return action
-
     def _run(self, state, sender, reciever, reward):
-            
 
         action = self.policy(state, sender, reciever)
 
         if self._N > 0:
             ind = self.Qindex(state)
-            Q[reciever][sender][action][ind] += self._alpha * (reward + self._gamma * Q[reciever][sender][self._lastaction][self.Qindex(self._laststate)] - Q[reciever][sender][action][ind])
+
+            print(self._lastaction)
+            print(self._Q[reciever][sender][self._lastaction][self.Qindex(self._laststate)])
+
+            self._Q[reciever][sender][action][ind] += self._alpha * (reward + self._gamma * self._Q[reciever][sender][self._lastaction][self.Qindex(self._laststate)] - self._Q[reciever][sender][action][ind])
 
         self._N += 1 
         self._lastaction = action
