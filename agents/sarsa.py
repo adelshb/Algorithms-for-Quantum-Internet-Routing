@@ -103,12 +103,11 @@ class SARSAAgent(Agent):
         if self._N > 0:
             ind = self.Qindex(state)
 
-            print(self._lastaction)
-            print(self._Q[reciever][sender][self._lastaction][self.Qindex(self._laststate)])
+            self._Q[reciever][sender][action][ind] += self._alpha * (reward + self._gamma * self._Q[self._lastreciever][self._lastsender][self._lastaction][self.Qindex(self._laststate)] - self._Q[reciever][sender][action][ind])
 
-            self._Q[reciever][sender][action][ind] += self._alpha * (reward + self._gamma * self._Q[reciever][sender][self._lastaction][self.Qindex(self._laststate)] - self._Q[reciever][sender][action][ind])
-
-        self._N += 1 
+        self._N += 1
+        self._lastsender = sender
+        self._lastreciever = reciever
         self._lastaction = action
         self._laststate = state
 

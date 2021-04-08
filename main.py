@@ -58,6 +58,9 @@ def main(args):
                                 epsilon = args.agent_param["epsilon"],
                                 alpha = args.agent_param["alpha"],
                                 gamma = args.agent_param["gamma"])
+    # agent = EGreedyBanditAgent(physical_network = C, 
+    #                             virtual_network = Q,
+    #                             epsilon = args.agent_param["epsilon"])
     # agent = RandomNeighborsAgent(physical_network = C, 
     #                                 virtual_network = Q)
 
@@ -94,10 +97,10 @@ if __name__ == "__main__":
 
     # Networks gE
     parser.add_argument("--network", type=str, default="cycle", choices=_available_networks)
-    parser.add_argument("--network_param", type=yaml.load, default="{n: 5, dth: 1}")
+    parser.add_argument("--network_param", type=yaml.load, default="{n: 10, dth: 1}")
 
     # Experiments
-    parser.add_argument("--epochs", type=int, default=100)
+    parser.add_argument("--epochs", type=int, default=1000000)
 
     # Save data
     parser.add_argument("--path", nargs=1, default=os.getcwd())

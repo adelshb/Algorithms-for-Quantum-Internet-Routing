@@ -63,7 +63,7 @@ class RandomNeighborsAgent(Agent):
         else:
             return random.choice(neighbors)
 
-    def _run(self, state, sender, reciever):
+    def _run(self, state, sender, reciever, reward):
 
         action = self.policy(state, sender, reciever)
 
