@@ -32,9 +32,11 @@ class RandomNeighborsAgent(Agent):
         """
         
         # Get parameters
-        print("Loading initial parameters...")
         self._physical_network = physical_network
         self._virtual_network = virtual_network
+
+        # Initialize number of epochs
+        self._N = 0
 
     def policy(self, state, sender, reciever) -> int:
         """ Compute the action.
@@ -47,7 +49,7 @@ class RandomNeighborsAgent(Agent):
         ##
         return action
 
-    def _run(self, state, sender, reciever):
+    def _run(self, state, sender, reciever, reward):
 
         action = self.policy(state, sender, reciever)
 

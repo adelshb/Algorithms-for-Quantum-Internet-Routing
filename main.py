@@ -20,9 +20,11 @@ import yaml
 import networkx as nx
 
 from environements.random import RandomEnvironement
-#from agents.random import RandomNeighborsAgent
+
+from agents.random import RandomNeighborsAgent
 from agents.egreedybandit import EGreedyBanditAgent
-#import agents as ag
+from agents.sarsa import SARSAAgent
+
 from networks.cycle import cycle_net
 
 _available_environements = [
@@ -31,7 +33,8 @@ _available_environements = [
 
 _available_agents = [
     "random",
-    "epsilon_greedy_bandit"
+    "epsilon_greedy_bandit",
+    "sarsa"
     ]
 
 _available_networks = [
@@ -50,9 +53,11 @@ def main(args):
     sender = env._sender
     reciever = env._reciever
 
-    agent = EGreedyBanditAgent(physical_network = C, 
+    agent = SARSAAgent(physical_network = C, 
                                 virtual_network = Q,
-                                epsilon= args.agent_param["epsilon"])
+                                epsilon = args.agent_param["epsilon"],
+                                alpha = args.agent_param["alpha"],
+                                gamma = args.agent_param["gamma"])
     # agent = RandomNeighborsAgent(physical_network = C, 
     #                                 virtual_network = Q)
 
@@ -74,7 +79,7 @@ def main(args):
         
         R += result.reward
 
-    print("The accumulated reward is: ", R)
+    print("The average reward is: ", R/args.epochs)
 
 
 if __name__ == "__main__":
@@ -85,14 +90,14 @@ if __name__ == "__main__":
 
     # Agent
     parser.add_argument("--agent", type=str, default="epsilon_greedy_bandit", choices=_available_agents)
-    parser.add_argument("--agent_param", type=yaml.load, default="{epsilon: 0.7}")
+    parser.add_argument("--agent_param", type=yaml.load, default="{epsilon: 0.2, alpha: 0.5, gamma: 0.5}")
 
     # Networks gE
     parser.add_argument("--network", type=str, default="cycle", choices=_available_networks)
     parser.add_argument("--network_param", type=yaml.load, default="{n: 10, dth: 2}")
 
     # Experiments
-    parser.add_argument("--epochs", type=int, default=20000)
+    parser.add_argument("--epochs", type=int, default=100)
 
     # Save data
     parser.add_argument("--path", nargs=1, default=os.getcwd())
