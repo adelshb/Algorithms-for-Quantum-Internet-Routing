@@ -20,7 +20,9 @@ import yaml
 import networkx as nx
 
 from environements.random import RandomEnvironement
-from agents.random import RandomNeighborsAgent
+#from agents.random import RandomNeighborsAgent
+from agents.egreedybandit import EGreedyBanditAgent
+#import agents as ag
 from networks.cycle import cycle_net
 
 _available_environements = [
@@ -29,6 +31,7 @@ _available_environements = [
 
 _available_agents = [
     "random",
+    "epsilon_greedy_bandit"
     ]
 
 _available_networks = [
@@ -46,13 +49,20 @@ def main(args):
     state = env._state
     sender = env._sender
     reciever = env._reciever
-    agent = RandomNeighborsAgent(physical_network = C, 
-                                    virtual_network = Q)
+
+    agent = EGreedyBanditAgent(physical_network = C, 
+                                virtual_network = Q,
+                                epsilon= args.agent_param["epsilon"])
+    # agent = RandomNeighborsAgent(physical_network = C, 
+    #                                 virtual_network = Q)
 
     R = 0
     for __ in tqdm(range(args.epochs)):
         # Compute action through Agent's policy
-        action = agent.run(state= state, sender= sender, reciever= reciever)
+        if __ == 0:
+            action = agent.run(state= state, sender= sender, reciever= reciever)
+        else:
+            action = agent.run(state= state, sender= sender, reciever= reciever, reward= result.reward)
         
         # State evolution and compute reward
         result = env.run(action= action)
@@ -74,14 +84,15 @@ if __name__ == "__main__":
     parser.add_argument("--environement", type=str, default="random", choices=_available_environements)
 
     # Agent
-    parser.add_argument("--agent", type=str, default="random", choices=_available_agents)
+    parser.add_argument("--agent", type=str, default="epsilon_greedy_bandit", choices=_available_agents)
+    parser.add_argument("--agent_param", type=yaml.load, default="{epsilon: 0.7}")
 
-    # Networks 
+    # Networks gE
     parser.add_argument("--network", type=str, default="cycle", choices=_available_networks)
     parser.add_argument("--network_param", type=yaml.load, default="{n: 10, dth: 2}")
 
     # Experiments
-    parser.add_argument("--epochs", type=int, default=200)
+    parser.add_argument("--epochs", type=int, default=20000)
 
     # Save data
     parser.add_argument("--path", nargs=1, default=os.getcwd())

@@ -31,7 +31,7 @@ class Agent(ABC):
         self._physical_network = physical_network
         self._virtual_init_network = virtual_network
 
-    def run(self, state: object, sender: int, reciever: int):
+    def run(self, state: object, sender: int, reciever: int, reward: Optional[float]= None):
         """Execute the policy with selected Environement for given State and Action.
         Args:
             state: current state of the virtual network.
@@ -45,10 +45,11 @@ class Agent(ABC):
         if sender is None or reciever is None:
             raise ValueError("A sender and/or a reciever"
                             "must be supplied to run the agent.")
-        return self._run(state, sender, reciever)
+                            
+        return self._run(state, sender, reciever, reward)
 
     @abstractmethod
-    def _run(self, state: object, sender: int, reciever: int) -> int:
+    def _run(self, state: object, sender: int, reciever: int, reward: Optional[float]=None) -> int:
         raise NotImplementedError()
 
     @property
