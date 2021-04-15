@@ -47,9 +47,11 @@ class SARSAAgent(Agent):
         n = len(self._edges)
         possible_states = [tuple([int(j) for j in '{:0{}b}'.format(i, n)]) for i in range(2**n)]
         self._Q = {}
-        for r in range(self._size):
+        #for r in range(self._size):
+        for r in list(self._virtual_network.nodes()):
             self._Q[r] = {}
-            for s in range(self._size):
+            #for s in range(self._size):
+            for s in list(self._virtual_network.nodes()):
                 if s != r:
                     self._Q[r][s]={}
                     for n in list(self._virtual_network.neighbors(s)):
