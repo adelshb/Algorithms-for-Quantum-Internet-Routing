@@ -109,7 +109,7 @@ def main():
                     SARSA.append(D)
 
         DATA['sarsa'] = SARSA
-        with open('data/benchmark-sarsa/benchmark.json', 'w') as fp:
+        with open('data/benchmark-sarsa/{}.json'.format(i), 'w') as fp:
             json.dump(DATA, fp)
 
 if __name__ == "__main__":
