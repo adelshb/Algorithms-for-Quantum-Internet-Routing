@@ -65,8 +65,6 @@ def main():
     experiments = 5
 
     for i in tqdm(range(experiments)):
-
-        print('kjgsdlfkhsdlfkhwelfkh')
         
         # Generate random network
         n = np.random.randint(nmin, nmax+1)
@@ -95,8 +93,6 @@ def main():
         for e in np.arange(0, 1+d, d):
             for a in np.arange(0, 1+d, d):
                 for y in np.arange(0, 1+d, d):
-
-                    print(e,a,y)
 
                     D = {}
                     D['epsilon'] = e 
