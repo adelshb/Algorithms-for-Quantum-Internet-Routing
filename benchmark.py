@@ -12,7 +12,7 @@
 
 """Wrapper for Environement and Agent."""
 
-#from argparse import ArgumentParser
+from argparse import ArgumentParser
 from tqdm import tqdm
 import json
 
@@ -55,19 +55,12 @@ def run_experiment(env, agent, epochs):
         R.append(r)
     return R
 
-def main():
+def main(args):
 
-    # Parameters
-    nmin = 5
-    nmax = 10
-    d = 0.5
-    epochs = 5
-    experiments = 5
-
-    for i in tqdm(range(experiments)):
+    for i in tqdm(range(args.experiments)):
         
         # Generate random network
-        n = np.random.randint(nmin, nmax+1)
+        n = np.random.randint(args.nmin, args.nmax+1)
         p = np.random.uniform(0, 1)
 
         C, Q = random_net(n= n, p= p)
@@ -80,19 +73,22 @@ def main():
         DATA["virtual network"]["nodes"] = list(Q.nodes())
         DATA["virtual network"]["edges"] = list(Q.edges())
 
-        # Initialize the Environement, the different parameters and the Agent
+        # Initialize the Environement
         env = RandomEnvironement(physical_network = C, 
                                     virtual_network = Q)
 
-        # Random Agent
+        #### Random Agent ###
         agent = RandomNeighborsAgent(physical_network = C, 
                                     virtual_network = Q)
-        R = run_experiment(env, agent, epochs)
+
+        R = run_experiment(env, agent, args.epochs)
         DATA['random-agent'] = R
+
+        #### SARSA ####
         SARSA = []
-        for e in np.arange(0, 1+d, d):
-            for a in np.arange(0, 1+d, d):
-                for y in np.arange(0, 1+d, d):
+        for e in np.arange(args.delta, 1, args.delta):
+            for a in np.arange(args.delta, 1, args.delta):
+                for y in np.arange(args.delta, 1, args.delta):
 
                     D = {}
                     D['epsilon'] = e 
@@ -104,13 +100,31 @@ def main():
                                 epsilon = e,
                                 alpha = a,
                                 gamma = y)
-                    R = run_experiment(env, agent, epochs)
+
+                    R = run_experiment(env, agent, args.epochs)
                     D['reward'] = R
                     SARSA.append(D)
 
         DATA['sarsa'] = SARSA
+
+
+        # Save data
         with open('data/benchmark-sarsa/{}.json'.format(i), 'w') as fp:
             json.dump(DATA, fp)
 
 if __name__ == "__main__":
-    main()
+    parser = ArgumentParser()
+
+    # Experiments 
+    parser.add_argument("--experiments", type=int, default=5)
+    parser.add_argument("--epochs", type=int, default=5)
+
+    # Agent
+    parser.add_argument("--delta", type=float, default=0.2)
+    
+    # Network
+    parser.add_argument("--nmin", type=int, default=5)
+    parser.add_argument("--nmax", type=int, default=10)
+
+    args = parser.parse_args()
+    main(args)
