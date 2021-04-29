@@ -15,16 +15,17 @@ Random physical and virtual network.
 """
 
 import networkx as nx
-from networkx.generators.random_graphs import fast_gnp_random_graph
+from networkx.generators.random_graphs import random_geometric_graph, watts_strogatz_graph
 
-def random_net(n = 10, p = 0.2):
+def random_net(n =10, radius = 0.1, dth = 2, p = 0.1):
 
     # Physical network
-    C = fast_gnp_random_graph(n, p, seed=None, directed=False)
+    C = random_geometric_graph(n, radius, dim=2, pos=None, p=2, seed=None)
     C.remove_nodes_from(list(nx.isolates(C)))
 
     # Virtual network
-    Q = fast_gnp_random_graph(n, p, seed=None, directed=False)
+    # small world network
+    Q = watts_strogatz_graph(n, k= dth, p, seed=None)
     Q.remove_nodes_from(list(nx.isolates(Q)))
 
     return C, Q
