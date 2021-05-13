@@ -24,6 +24,7 @@ from environements.random import RandomEnvironement
 from agents.random import RandomNeighborsAgent
 from agents.egreedybandit import EGreedyBanditAgent
 from agents.sarsa import SARSAAgent
+from agents.greed_routing_agent import GreedyNeighborsAgent
 
 from networks.cycle import cycle_net
 
@@ -53,16 +54,18 @@ def main(args):
     sender = env._sender
     reciever = env._reciever
 
-    agent = SARSAAgent(physical_network = C, 
-                                virtual_network = Q,
-                                epsilon = args.agent_param["epsilon"],
-                                alpha = args.agent_param["alpha"],
-                                gamma = args.agent_param["gamma"])
-    # agent = EGreedyBanditAgent(physical_network = C, 
+    #agent = SARSAAgent(physical_network = C, 
+    #                            virtual_network = Q,
+    #                            epsilon = args.agent_param["epsilon"],
+    #                            alpha = args.agent_param["alpha"],
+    #                            gamma = args.agent_param["gamma"])
+    #agent = EGreedyBanditAgent(physical_network = C, 
     #                             virtual_network = Q,
     #                             epsilon = args.agent_param["epsilon"])
-    # agent = RandomNeighborsAgent(physical_network = C, 
+    #agent = RandomNeighborsAgent(physical_network = C, 
     #                                 virtual_network = Q)
+    agent = GreedyNeighborsAgent(physical_network = C, 
+                                     virtual_network = Q)
 
     R = 0
     for __ in tqdm(range(args.epochs)):

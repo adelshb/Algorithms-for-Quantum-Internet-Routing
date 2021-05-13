@@ -16,6 +16,7 @@ Template Agent for Quantum Internet Network Routing.
 import random
 
 from agents.agent import Agent
+import networkx as nx
 
 class GreedyNeighborsAgent(Agent):
     """
@@ -56,6 +57,8 @@ class GreedyNeighborsAgent(Agent):
                 minm = temp_dist
                 temp_curr = v
             curr = temp_curr
+            
+            
         print(Gver.edges(sender))
         print(sender)
         print(curr)
@@ -68,7 +71,7 @@ class GreedyNeighborsAgent(Agent):
         
         return curr
 
-    def _run(self, state, sender, reciever):
+    def _run(self, state, sender, reciever, reward):
 
         action = self.policy(state, sender, reciever)
 

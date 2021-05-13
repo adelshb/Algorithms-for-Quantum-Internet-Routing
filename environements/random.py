@@ -78,6 +78,9 @@ class RandomEnvironement(QuantumInternetNetwork):
         if self._state.has_edge(self._sender, action):
             self._state.remove_edge(self._sender, action)
             self._sender = action
+        elif self._sender == action:
+            self._state =self._virtual_network.copy()
+            refresh = True
         elif self._virtual_network.has_edge(self._sender, action):
             self._state =self._virtual_network.copy()
             refresh = True
