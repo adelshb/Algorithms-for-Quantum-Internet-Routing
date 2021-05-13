@@ -15,6 +15,7 @@
 from argparse import ArgumentParser
 from tqdm import tqdm
 import json
+import os
 
 import networkx as nx
 import numpy as np
@@ -107,9 +108,10 @@ def main(args):
 
         DATA['sarsa'] = SARSA
 
-
         # Save data
-        with open('data/benchmark-sarsa/{}.json'.format(i), 'w') as fp:
+        if not os.path.isdir(args.savepath):
+            os.makedirs(args.savepath)
+        with open(args.savepath + '{}.json'.format(i), 'w') as fp:
             json.dump(DATA, fp)
 
 if __name__ == "__main__":
@@ -125,6 +127,9 @@ if __name__ == "__main__":
     # Network
     parser.add_argument("--nmin", type=int, default=5)
     parser.add_argument("--nmax", type=int, default=10)
+
+    # Saving data
+    parser.add_argument("--savepath", type=str, default="data/benchmark/") 
 
     args = parser.parse_args()
     main(args)
