@@ -1,6 +1,6 @@
 python benchmark.py \
     --experiments 10 \
     --epochs 5 \
-    --delta 0.2 \
+    --delta 0.5 \
     --nmin 4 \
-    --nmax 6
+    --nmax 5

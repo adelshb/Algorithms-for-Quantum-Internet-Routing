@@ -10,7 +10,7 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-"""Wrapper for Environement and Agent."""
+"""Benchmark of different Agents"""
 
 from argparse import ArgumentParser
 from tqdm import tqdm
