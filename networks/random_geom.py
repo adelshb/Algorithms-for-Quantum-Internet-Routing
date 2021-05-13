@@ -25,7 +25,7 @@ def random_net(n =10, radius = 0.1, dth = 2, p = 0.1):
 
     # Virtual network
     # small world network
-    Q = watts_strogatz_graph(n, k= dth, p, seed=None)
+    Q = watts_strogatz_graph(n, k=dth, p=p, seed=None)
     Q.remove_nodes_from(list(nx.isolates(Q)))
 
     return C, Q

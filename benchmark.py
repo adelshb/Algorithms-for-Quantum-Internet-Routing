@@ -86,9 +86,9 @@ def main(args):
 
         #### SARSA ####
         SARSA = []
-        for e in np.arange(args.delta, 1, args.delta):
-            for a in np.arange(args.delta, 1, args.delta):
-                for y in np.arange(args.delta, 1, args.delta):
+        for e in np.arange(0, 1+args.delta, args.delta):
+            for a in np.arange(0, 1+args.delta, args.delta):
+                for y in np.arange(0, 1+args.delta, args.delta):
 
                     D = {}
                     D['epsilon'] = e 

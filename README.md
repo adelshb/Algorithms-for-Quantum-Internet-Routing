@@ -1,5 +1,5 @@
-# Quantum Internet Routing with with Reinforcement Learning
-Quantum Internet Routing with with Reinforcement Learning
+# Quantum Internet Routing with Reinforcement Learning
+Quantum Internet Routing with Reinforcement Learning
 
 ## Requirements
 
@@ -10,3 +10,6 @@ Quantum Internet Routing with with Reinforcement Learning
 ```shell
 pip install -r requirements.txt
 ```
+
+## License
+[Apache License 2.0](https://github.com/adelshb/Quantum-Internet-Routing-with-with-Reinforcement-Learning/blob/main/LICENSE)

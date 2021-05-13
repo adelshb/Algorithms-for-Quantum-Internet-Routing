@@ -14,7 +14,7 @@
 Random Environement for Quantum Internet Network.
 """
 
-from typing import List, Dict
+from typing import List, Dict, Tuple
 import random
 
 from environements.qin import QuantumInternetNetwork, QuantumInternetNetworkResult
@@ -51,7 +51,7 @@ class RandomEnvironement(QuantumInternetNetwork):
         else:
             return 1
 
-    def gsr_event(self) -> (int, int):
+    def gsr_event(self) -> Tuple[int, int]:
         """ Generate a sender reciever event. Generate a sender and a reciever. They are selected randomly.
         Returns:
             Vertices label of the sender and reciver.

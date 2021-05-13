@@ -27,4 +27,7 @@ def random_net(n = 10, p = 0.2):
     Q = fast_gnp_random_graph(n, p, seed=None, directed=False)
     Q.remove_nodes_from(list(nx.isolates(Q)))
 
+    if not list(C.nodes) or not list(Q.nodes):
+        C, Q = random_net(n, p+0.01)
+
     return C, Q
