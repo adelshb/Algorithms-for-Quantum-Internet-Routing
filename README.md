@@ -9,7 +9,7 @@ Quantum Internet Routing with Reinforcement Learning
 * Pandas
 
 ```shell
-pip install -r requirements.txt
+pip install .
 ```
 
 ## License
