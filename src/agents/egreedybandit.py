@@ -15,7 +15,7 @@ from typing import Optional
 
 import random
 
-from agents.agent import Agent
+from src.agents.agent import Agent
 
 class EGreedyBanditAgent(Agent):
     """

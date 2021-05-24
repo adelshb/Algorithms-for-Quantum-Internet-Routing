@@ -20,14 +20,14 @@ import os
 import networkx as nx
 import numpy as np
 
-from environements.random import RandomEnvironement
+from src.environements.random import RandomEnvironement
 
-from agents.random import RandomNeighborsAgent
-from agents.egreedybandit import EGreedyBanditAgent
-from agents.sarsa import SARSAAgent
+from src.agents.random import RandomNeighborsAgent
+from src.agents.egreedybandit import EGreedyBanditAgent
+from src.agents.sarsa import SARSAAgent
 
-from networks.cycle import cycle_net
-from networks.random import random_net
+from src.networks.cycle import cycle_net
+from src.networks.random import random_net
 
 def run_experiment(env, agent, epochs):
 
@@ -92,9 +92,10 @@ def main(args):
                 for y in np.arange(0, 1+args.delta, args.delta):
 
                     D = {}
-                    D['epsilon'] = e 
-                    D['alpha'] = a 
-                    D['gamma'] = y 
+                    D['param'] = {}
+                    D['param']['epsilon'] = e 
+                    D['param']['alpha'] = a 
+                    D['param']['gamma'] = y 
 
                     agent = SARSAAgent(physical_network = C, 
                                 virtual_network = Q,

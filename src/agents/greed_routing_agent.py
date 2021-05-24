@@ -15,7 +15,7 @@ Template Agent for Quantum Internet Network Routing.
 #from typing import List, Dict
 import random
 
-from agents.agent import Agent
+from src.agents.agent import Agent
 import networkx as nx
 
 class GreedyNeighborsAgent(Agent):

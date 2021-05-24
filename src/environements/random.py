@@ -17,7 +17,7 @@ Random Environement for Quantum Internet Network.
 from typing import List, Dict, Tuple
 import random
 
-from environements.qin import QuantumInternetNetwork, QuantumInternetNetworkResult
+from src.environements.qin import QuantumInternetNetwork, QuantumInternetNetworkResult
 
 class RandomEnvironement(QuantumInternetNetwork):
     """Random Events Environement for Quantum Internet Network."""
