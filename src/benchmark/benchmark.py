@@ -119,15 +119,15 @@ if __name__ == "__main__":
     parser = ArgumentParser()
 
     # Experiments 
-    parser.add_argument("--experiments", type=int, default=5)
-    parser.add_argument("--epochs", type=int, default=5)
+    parser.add_argument("--experiments", type=int, default=10000)
+    parser.add_argument("--epochs", type=int, default=200)
 
     # Agent
-    parser.add_argument("--delta", type=float, default=0.2)
+    parser.add_argument("--delta", type=float, default=0.1)
     
     # Network
     parser.add_argument("--nmin", type=int, default=5)
-    parser.add_argument("--nmax", type=int, default=10)
+    parser.add_argument("--nmax", type=int, default=30)
 
     # Saving data
     parser.add_argument("--savepath", type=str, default="data/benchmark/") 
