@@ -23,10 +23,11 @@ import numpy as np
 from src.environements.random import RandomEnvironement
 
 from src.agents.random import RandomNeighborsAgent
-from src.agents.egreedybandit import EGreedyBanditAgent
+#from src.agents.egreedybandit import EGreedyBanditAgent
+from src.agents.greed_routing_agent import GreedyNeighborsAgent
 from src.agents.sarsa import SARSAAgent
 
-from src.networks.cycle import cycle_net
+#from src.networks.cycle import cycle_net
 from src.networks.random import random_net
 
 def run_experiment(env, agent, epochs):
@@ -84,6 +85,13 @@ def main(args):
 
         R = run_experiment(env, agent, args.epochs)
         DATA['random-agent'] = R
+
+        #### Random Agent ###
+        agent = GreedyNeighborsAgent(physical_network = C, 
+                                    virtual_network = Q)
+
+        R = run_experiment(env, agent, args.epochs)
+        DATA['greedy-neighbors-agent'] = R
 
         #### SARSA ####
         SARSA = []
