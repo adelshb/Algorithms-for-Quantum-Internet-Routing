@@ -9,18 +9,15 @@
 # that they have been altered from the originals.
 
 """
-Template Agent for Quantum Internet Network Routing.
+Greedy Neighbors Algorithm for Quantum Internet Network Routing proposed in https://arxiv.org/abs/1907.11630.
 """
-
-#from typing import List, Dict
-import random
 
 from src.agents.agent import Agent
 import networkx as nx
 
 class GreedyNeighborsAgent(Agent):
     """
-    Description here
+    Class for Greedy Neighbors Agent.
     """
 
     def __init__(self,
@@ -37,42 +34,23 @@ class GreedyNeighborsAgent(Agent):
         self._physical_network = physical_network
         self._virtual_network = virtual_network
 
-  
-
     def policy(self, state, sender, reciever) -> int:
         """ Compute the action.
         Returns:
             The action.
         """
-        Gphys = self._physical_network
-        Gver  = state
-        curr = sender
-        n = Gphys.number_of_nodes()
-    
-        minm = n
-        for v in Gver.neighbors(curr):
-            temp_dist = nx.shortest_path_length(Gphys, v, reciever)
-            
+        
+        curr = sender    
+        minm = self._physical_network.number_of_nodes()
+
+        for v in state.neighbors(curr):
+            temp_dist = nx.shortest_path_length(self._physical_network, v, reciever)      
             if temp_dist < minm:
                 minm = temp_dist
                 temp_curr = v
-            curr = temp_curr
-            
-            
-        print(Gver.edges(sender))
-        print(sender)
-        print(curr)
-        print(reciever)
-        print(minm)
-        print(self._virtual_network.edges())
-        
-
-        
-        
+            curr = temp_curr    
         return curr
 
     def _run(self, state, sender, reciever, reward):
-
         action = self.policy(state, sender, reciever)
-
         return action
