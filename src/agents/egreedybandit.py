@@ -57,7 +57,6 @@ class EGreedyBanditAgent(Agent):
             # If the sender has no neighbor on the current state collect sender's neighbors on initial virtual netwok
             neighbors = list(self._virtual_network.neighbors(sender))
             if not neighbors:
-                print(sender)
                 raise Exception('The sender has no neighbor.')
         
         if random.random() < (1 - self._epsilon):

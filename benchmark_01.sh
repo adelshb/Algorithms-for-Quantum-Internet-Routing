@@ -1,6 +1,6 @@
 python src/benchmark/benchmark.py \
-    --experiments 100 \
-    --epochs 200 \
-    --delta 0.1 \
+    --experiments 10 \
+    --epochs 20 \
+    --delta 0.5 \
     --nmin 4 \
-    --nmax 6
+    --nmax 7

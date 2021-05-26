@@ -42,7 +42,8 @@ class GreedyNeighborsAgent(Agent):
         curr = sender    
         minm = self._physical_network.number_of_nodes()
 
-        for v in state.neighbors(curr):
+        #for v in state.neighbors(curr):
+        for v in self._physical_network.neighbors(curr):
             temp_dist = nx.shortest_path_length(self._physical_network, v, reciever)      
             if temp_dist < minm:
                 minm = temp_dist

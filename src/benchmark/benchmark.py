@@ -27,7 +27,7 @@ from src.agents.random import RandomNeighborsAgent
 from src.agents.greed_routing_agent import GreedyNeighborsAgent
 from src.agents.sarsa import SARSAAgent
 
-#from src.networks.cycle import cycle_net
+from src.networks.cycle import cycle_net
 from src.networks.random import random_net
 
 def run_experiment(env, agent, epochs):
@@ -66,6 +66,7 @@ def main(args):
         p = np.random.uniform(0, 1)
 
         C, Q = random_net(n= n, p= p)
+        #C, Q = cycle_net(n= n, dth= 2)
         
         DATA = {}
         DATA["physical network"] = {}
@@ -86,36 +87,36 @@ def main(args):
         R = run_experiment(env, agent, args.epochs)
         DATA['random-agent'] = R
 
-        #### Random Agent ###
+        #### Greedy Neighbnors Agent ###
         agent = GreedyNeighborsAgent(physical_network = C, 
                                     virtual_network = Q)
 
         R = run_experiment(env, agent, args.epochs)
         DATA['greedy-neighbors-agent'] = R
 
-        #### SARSA ####
-        SARSA = []
-        for e in np.arange(0, 1+args.delta, args.delta):
-            for a in np.arange(0, 1+args.delta, args.delta):
-                for y in np.arange(0, 1+args.delta, args.delta):
+        # #### SARSA ####
+        # SARSA = []
+        # for e in np.arange(0, 1+args.delta, args.delta):
+        #     for a in np.arange(0, 1+args.delta, args.delta):
+        #         for y in np.arange(0, 1+args.delta, args.delta):
 
-                    D = {}
-                    D['param'] = {}
-                    D['param']['epsilon'] = e 
-                    D['param']['alpha'] = a 
-                    D['param']['gamma'] = y 
+        #             D = {}
+        #             D['param'] = {}
+        #             D['param']['epsilon'] = e 
+        #             D['param']['alpha'] = a 
+        #             D['param']['gamma'] = y 
 
-                    agent = SARSAAgent(physical_network = C, 
-                                virtual_network = Q,
-                                epsilon = e,
-                                alpha = a,
-                                gamma = y)
+        #             agent = SARSAAgent(physical_network = C, 
+        #                         virtual_network = Q,
+        #                         epsilon = e,
+        #                         alpha = a,
+        #                         gamma = y)
 
-                    R = run_experiment(env, agent, args.epochs)
-                    D['reward'] = R
-                    SARSA.append(D)
+        #             R = run_experiment(env, agent, args.epochs)
+        #             D['reward'] = R
+        #             SARSA.append(D)
 
-        DATA['sarsa'] = SARSA
+        # DATA['sarsa'] = SARSA
 
         # Save data
         if not os.path.isdir(args.savepath):

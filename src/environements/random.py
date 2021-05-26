@@ -17,6 +17,8 @@ Random Environement for Quantum Internet Network.
 from typing import List, Dict, Tuple
 import random
 
+import networkx as nx
+
 from src.environements.qin import QuantumInternetNetwork, QuantumInternetNetworkResult
 
 class RandomEnvironement(QuantumInternetNetwork):
@@ -57,12 +59,37 @@ class RandomEnvironement(QuantumInternetNetwork):
             Vertices label of the sender and reciver.
         """
 
-        nodes = list(self._state.nodes)
-        s = random.choice(nodes)
-        nodes.remove(s)
-        r = random.choice(nodes)
-        return s, r
+        paths = []
+        # Generate all simple paths with cutoff |V|
+        nodes = list(self._physical_network.nodes)
+        for n in nodes:
+            nodes.remove(n)
+            paths.append(list(nx.all_simple_paths(self._physical_network, source=n, target=nodes)))
+        paths = [j for i in paths for j in i]
+        
+        # Randmly select a path and select sender/reciever
+        path = random.choice(paths)
+        return path[0], path[-1]
 
+        # paths = []
+        # while not paths:
+
+        # # Generate all simple paths with cutoff |V|
+        #     #nodes = list(self._state.nodes)
+        #     nodes = list(self._physical_network.nodes)
+        #     for n in nodes:
+        #         nodes.remove(n)
+        #         paths.append(list(nx.all_simple_paths(self._physical_network, source=n, target=nodes, cutoff=self._physical_network.number_of_nodes())))
+        #     paths = [j for i in paths for j in i]
+        #     print("#########PATHS",paths)
+        #     print("#########PATHS",self._physical_network.edges)
+        #     try:
+        #         # Randmly select a path and select sender/reciever
+        #         path = random.choice(paths)
+        #         return path[0], path[-1]
+        #     except:
+        #         self._state = self._virtual_network.copy()        
+            
     def _run(self,
         action: int) ->  Dict:
 
@@ -79,10 +106,10 @@ class RandomEnvironement(QuantumInternetNetwork):
             self._state.remove_edge(self._sender, action)
             self._sender = action
         elif self._sender == action:
-            self._state =self._virtual_network.copy()
+            self._state = self._virtual_network.copy()
             refresh = True
         elif self._virtual_network.has_edge(self._sender, action):
-            self._state =self._virtual_network.copy()
+            self._state = self._virtual_network.copy()
             refresh = True
         else:
             raise Exception('Selected action not possible. There is no edge between the two nodes')

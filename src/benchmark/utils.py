@@ -16,14 +16,17 @@ import pandas as pd
 def parser(data: List[Dict])-> Tuple[object]:
 
     random = []
+    greedy = []
     sarsa = []
     for d in data:
         n = max(d['physical network']['nodes'][-1], d['virtual network']['nodes'][-1])
 
         random.append([n, d['random-agent']])
-        for s in d['sarsa']:
-            sarsa.append([n, s['param']['epsilon'], s['param']['alpha'], s['param']['gamma'], s['reward']])
+        greedy.append([n, d['greedy-neighbors-agent']])
+        # for s in d['sarsa']:
+        #     sarsa.append([n, s['param']['epsilon'], s['param']['alpha'], s['param']['gamma'], s['reward']])
 
     random = pd.DataFrame(random, columns= ['nodes', 'reward'])
-    sarsa = pd.DataFrame(sarsa, columns= ['nodes', 'epsilon', 'alpha', 'gamma', 'reward'])
-    return random, sarsa
+    greedy = pd.DataFrame(greedy, columns= ['nodes', 'reward'])
+    # sarsa = pd.DataFrame(sarsa, columns= ['nodes', 'epsilon', 'alpha', 'gamma', 'reward'])
+    return random, greedy, sarsa

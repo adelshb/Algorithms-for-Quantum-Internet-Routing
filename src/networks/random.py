@@ -21,11 +21,12 @@ def random_net(n = 10, p = 0.2):
 
     # Physical network
     C = fast_gnp_random_graph(n, p, seed=None, directed=False)
-    C.remove_nodes_from(list(nx.isolates(C)))
+    #C.remove_nodes_from(list(nx.isolates(C)))
 
     # Virtual network
     Q = fast_gnp_random_graph(n, p, seed=None, directed=False)
-    Q.remove_nodes_from(list(nx.isolates(Q)))
+    Q.add_edges_from(C.edges)
+    #Q.remove_nodes_from(list(nx.isolates(Q)))
 
     if not list(C.nodes) or not list(Q.nodes):
         C, Q = random_net(n, p+0.01)
