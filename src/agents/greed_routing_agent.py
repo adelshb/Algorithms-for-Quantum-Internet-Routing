@@ -30,7 +30,6 @@ class GreedyNeighborsAgent(Agent):
         """
         
         # Get parameters
-        print("Loading initial parameters...")
         self._physical_network = physical_network
         self._virtual_network = virtual_network
 
