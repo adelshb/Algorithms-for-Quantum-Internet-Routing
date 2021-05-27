@@ -63,10 +63,12 @@ def main(args):
         
         # Generate random network
         n = np.random.randint(args.nmin, args.nmax+1)
-        p = np.random.uniform(0, 1)
 
-        C, Q = random_net(n= n, p= p)
-        #C, Q = cycle_net(n= n, dth= 2)
+        # p = np.random.uniform(0, 1)
+        # C, Q = random_net(n= n, p= p)
+
+        dth = np.random.randint(1, args.dthmax+1)
+        C, Q = cycle_net(n= n, dth= dth)
         
         DATA = {}
         DATA["physical network"] = {}
@@ -95,28 +97,28 @@ def main(args):
         DATA['greedy-neighbors-agent'] = R
 
         # #### SARSA ####
-        # SARSA = []
-        # for e in np.arange(0, 1+args.delta, args.delta):
-        #     for a in np.arange(0, 1+args.delta, args.delta):
-        #         for y in np.arange(0, 1+args.delta, args.delta):
+        SARSA = []
+        for e in np.arange(0, 1+args.delta, args.delta):
+            for a in np.arange(0, 1+args.delta, args.delta):
+                for y in np.arange(0, 1+args.delta, args.delta):
 
-        #             D = {}
-        #             D['param'] = {}
-        #             D['param']['epsilon'] = e 
-        #             D['param']['alpha'] = a 
-        #             D['param']['gamma'] = y 
+                    D = {}
+                    D['param'] = {}
+                    D['param']['epsilon'] = e 
+                    D['param']['alpha'] = a 
+                    D['param']['gamma'] = y 
 
-        #             agent = SARSAAgent(physical_network = C, 
-        #                         virtual_network = Q,
-        #                         epsilon = e,
-        #                         alpha = a,
-        #                         gamma = y)
+                    agent = SARSAAgent(physical_network = C, 
+                                virtual_network = Q,
+                                epsilon = e,
+                                alpha = a,
+                                gamma = y)
 
-        #             R = run_experiment(env, agent, args.epochs)
-        #             D['reward'] = R
-        #             SARSA.append(D)
+                    R = run_experiment(env, agent, args.epochs)
+                    D['reward'] = R
+                    SARSA.append(D)
 
-        # DATA['sarsa'] = SARSA
+        DATA['sarsa'] = SARSA
 
         # Save data
         if not os.path.isdir(args.savepath):
@@ -137,6 +139,7 @@ if __name__ == "__main__":
     # Network
     parser.add_argument("--nmin", type=int, default=5)
     parser.add_argument("--nmax", type=int, default=30)
+    parser.add_argument("--dthmax", type=int, default=5)
 
     # Saving data
     parser.add_argument("--savepath", type=str, default="data/benchmark/") 

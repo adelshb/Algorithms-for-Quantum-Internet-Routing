@@ -23,10 +23,10 @@ def parser(data: List[Dict])-> Tuple[object]:
 
         random.append([n, d['random-agent']])
         greedy.append([n, d['greedy-neighbors-agent']])
-        # for s in d['sarsa']:
-        #     sarsa.append([n, s['param']['epsilon'], s['param']['alpha'], s['param']['gamma'], s['reward']])
+        for s in d['sarsa']:
+            sarsa.append([n, s['param']['epsilon'], s['param']['alpha'], s['param']['gamma'], s['reward']])
 
     random = pd.DataFrame(random, columns= ['nodes', 'reward'])
     greedy = pd.DataFrame(greedy, columns= ['nodes', 'reward'])
-    # sarsa = pd.DataFrame(sarsa, columns= ['nodes', 'epsilon', 'alpha', 'gamma', 'reward'])
+    sarsa = pd.DataFrame(sarsa, columns= ['nodes', 'epsilon', 'alpha', 'gamma', 'reward'])
     return random, greedy, sarsa
