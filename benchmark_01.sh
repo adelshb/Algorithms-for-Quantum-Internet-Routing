@@ -4,4 +4,4 @@ python src/benchmark/benchmark.py \
     --delta 0.3 \
     --nmin 4 \
     --nmax 5 \
-    --dthmax 5
+    --dthmax 2

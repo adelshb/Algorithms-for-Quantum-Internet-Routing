@@ -16,6 +16,7 @@ Random Environement for Quantum Internet Network.
 
 from typing import List, Dict, Tuple
 import random
+import numpy as np
 
 import networkx as nx
 
@@ -38,7 +39,18 @@ class RandomEnvironement(QuantumInternetNetwork):
         self._physical_network = physical_network
         self._virtual_network = virtual_network
         self._state = virtual_network.copy()
-        self._sender, self._reciever = self.gsr_event() 
+        self._sender, self._reciever = self.gsr_event()
+
+        paths = []
+        # Generate all simple paths with cutoff |V|
+        nodes = list(self._physical_network.nodes)
+        for n in nodes:
+            nodes.remove(n)
+            paths.append(list(nx.all_simple_paths(self._physical_network, source=n, target=nodes)))
+        self._paths = [j for i in paths for j in i]
+
+        v = np.random.rand(len(self._paths))
+        self._dist = v / np.linalg.norm(v)
 
     def compute_reward(self, refresh, success) -> float:
         """ Compute the reward.
@@ -58,38 +70,11 @@ class RandomEnvironement(QuantumInternetNetwork):
         Returns:
             Vertices label of the sender and reciver.
         """
-
-        paths = []
-        # Generate all simple paths with cutoff |V|
-        nodes = list(self._physical_network.nodes)
-        for n in nodes:
-            nodes.remove(n)
-            paths.append(list(nx.all_simple_paths(self._physical_network, source=n, target=nodes)))
-        paths = [j for i in paths for j in i]
         
         # Randmly select a path and select sender/reciever
-        path = random.choice(paths)
+        path = random.choices(self._paths, self._dist)[0]
         return path[0], path[-1]
-
-        # paths = []
-        # while not paths:
-
-        # # Generate all simple paths with cutoff |V|
-        #     #nodes = list(self._state.nodes)
-        #     nodes = list(self._physical_network.nodes)
-        #     for n in nodes:
-        #         nodes.remove(n)
-        #         paths.append(list(nx.all_simple_paths(self._physical_network, source=n, target=nodes, cutoff=self._physical_network.number_of_nodes())))
-        #     paths = [j for i in paths for j in i]
-        #     print("#########PATHS",paths)
-        #     print("#########PATHS",self._physical_network.edges)
-        #     try:
-        #         # Randmly select a path and select sender/reciever
-        #         path = random.choice(paths)
-        #         return path[0], path[-1]
-        #     except:
-        #         self._state = self._virtual_network.copy()        
-            
+                 
     def _run(self,
         action: int) ->  Dict:
 
