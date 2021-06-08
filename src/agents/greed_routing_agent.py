@@ -12,7 +12,7 @@
 Greedy Neighbors Algorithm for Quantum Internet Network Routing proposed in https://arxiv.org/abs/1907.11630.
 """
 
-from src.agents.agent import Agent
+from agents.agent import Agent
 import networkx as nx
 
 class GreedyNeighborsAgent(Agent):

@@ -20,7 +20,7 @@ import numpy as np
 
 import networkx as nx
 
-from src.environements.qin import QuantumInternetNetwork, QuantumInternetNetworkResult
+from environements.qin import QuantumInternetNetwork, QuantumInternetNetworkResult
 
 class RandomEnvironement(QuantumInternetNetwork):
     """Random Events Environement for Quantum Internet Network."""
@@ -39,18 +39,19 @@ class RandomEnvironement(QuantumInternetNetwork):
         self._physical_network = physical_network
         self._virtual_network = virtual_network
         self._state = virtual_network.copy()
-        self._sender, self._reciever = self.gsr_event()
 
-        paths = []
         # Generate all simple paths with cutoff |V|
+        paths = []
         nodes = list(self._physical_network.nodes)
         for n in nodes:
             nodes.remove(n)
             paths.append(list(nx.all_simple_paths(self._physical_network, source=n, target=nodes)))
         self._paths = [j for i in paths for j in i]
-
         v = np.random.rand(len(self._paths))
         self._dist = v / np.linalg.norm(v)
+
+        # Generate first sender and reciever
+        self._sender, self._reciever = self.gsr_event()
 
     def compute_reward(self, refresh, success) -> float:
         """ Compute the reward.

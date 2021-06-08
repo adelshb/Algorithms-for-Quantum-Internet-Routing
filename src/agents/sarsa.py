@@ -14,7 +14,7 @@ State–action–reward–state–action (SARSA) Agent for Quantum Internet Netw
 
 import random
 
-from src.agents.agent import Agent
+from agents.agent import Agent
 
 class SARSAAgent(Agent):
     """

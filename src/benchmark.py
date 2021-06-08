@@ -13,49 +13,24 @@
 """Benchmark of different Agents"""
 
 from argparse import ArgumentParser
+from typing import List, Dict, Tuple
 from tqdm import tqdm
 import json
 import os
 
 import networkx as nx
 import numpy as np
+import pandas as pd
 
-from src.environements.random import RandomEnvironement
+from environements.random import RandomEnvironement
 
-from src.agents.random import RandomNeighborsAgent
-#from src.agents.egreedybandit import EGreedyBanditAgent
-from src.agents.greed_routing_agent import GreedyNeighborsAgent
-from src.agents.sarsa import SARSAAgent
+from agents.random import RandomNeighborsAgent
+#from agents.egreedybandit import EGreedyBanditAgent
+from agents.greed_routing_agent import GreedyNeighborsAgent
+from agents.sarsa import SARSAAgent
 
-from src.networks.cycle import cycle_net
-from src.networks.random import random_net
-
-def run_experiment(env, agent, epochs):
-
-    state = env._state
-    sender = env._sender
-    reciever = env._reciever
-    R = []
-
-    r = 0
-    for __ in range(epochs):
-        # Compute action through Agent's policy
-        if __ == 0:
-            action = agent.run(state= state, sender= sender, reciever= reciever)
-        else:
-            action = agent.run(state= state, sender= sender, reciever= reciever, reward= result.reward)
-        
-        # State evolution and compute reward
-        result = env.run(action= action)
-        
-        # Update parameters
-        state = result.state
-        sender = result.sender
-        reciever = result.reciever
-        
-        r += result.reward
-        R.append(r)
-    return R
+from networks.cycle import cycle_net
+from networks.random import random_net
 
 def main(args):
 
@@ -125,6 +100,51 @@ def main(args):
             os.makedirs(args.savepath)
         with open(args.savepath + '{}.json'.format(i), 'w') as fp:
             json.dump(DATA, fp)
+
+def run_experiment(env, agent, epochs):
+
+    state = env._state
+    sender = env._sender
+    reciever = env._reciever
+    R = []
+
+    r = 0
+    for __ in range(epochs):
+        # Compute action through Agent's policy
+        if __ == 0:
+            action = agent.run(state= state, sender= sender, reciever= reciever)
+        else:
+            action = agent.run(state= state, sender= sender, reciever= reciever, reward= result.reward)
+        
+        # State evolution and compute reward
+        result = env.run(action= action)
+        
+        # Update parameters
+        state = result.state
+        sender = result.sender
+        reciever = result.reciever
+        
+        r += result.reward
+        R.append(r)
+    return R
+
+def parser(data: List[Dict])-> Tuple[object]:
+
+    random = []
+    greedy = []
+    sarsa = []
+    for d in data:
+        n = max(d['physical network']['nodes'][-1], d['virtual network']['nodes'][-1])
+
+        random.append([n, d['random-agent']])
+        greedy.append([n, d['greedy-neighbors-agent']])
+        for s in d['sarsa']:
+            sarsa.append([n, s['param']['epsilon'], s['param']['alpha'], s['param']['gamma'], s['reward']])
+
+    random = pd.DataFrame(random, columns= ['nodes', 'reward'])
+    greedy = pd.DataFrame(greedy, columns= ['nodes', 'reward'])
+    sarsa = pd.DataFrame(sarsa, columns= ['nodes', 'epsilon', 'alpha', 'gamma', 'reward'])
+    return random, greedy, sarsa
 
 if __name__ == "__main__":
     parser = ArgumentParser()

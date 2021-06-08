@@ -1,4 +1,4 @@
-python src/benchmark/benchmark.py \
+python src/benchmark.py \
     --experiments 20 \
     --epochs 50 \
     --delta 0.3 \

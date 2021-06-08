@@ -1,5 +1,5 @@
 # Quantum Internet Routing with Reinforcement Learning
-Quantum Internet Routing with Reinforcement Learning
+Quantum Internet Routing with Reinforcement Learning.
 
 ## Requirements
 
@@ -9,7 +9,7 @@ Quantum Internet Routing with Reinforcement Learning
 * Pandas
 
 ```shell
-pip install .
+pip install -r requirements
 ```
 
 ## License

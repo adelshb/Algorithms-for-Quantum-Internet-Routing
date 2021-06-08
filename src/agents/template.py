@@ -15,7 +15,7 @@ Template Agent for Quantum Internet Network Routing.
 #from typing import List, Dict
 import random
 
-from src.agents.agent import Agent
+from agents.agent import Agent
 
 class RandomNeighborsAgent(Agent):
     """
