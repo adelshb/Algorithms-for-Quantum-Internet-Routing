@@ -13,93 +13,86 @@
 """Benchmark of different Agents"""
 
 from argparse import ArgumentParser
-from typing import List, Dict, Tuple
-from tqdm import tqdm
+from datetime import datetime
+import uuid
+
+from tqdm.contrib.concurrent import process_map
+
 import json
 import os
 
-import networkx as nx
 import numpy as np
-#import pandas as pd
 
 from environements.random import RandomEnvironement
 
 from agents.random import RandomNeighborsAgent
-#from agents.egreedybandit import EGreedyBanditAgent
 from agents.greed_routing_agent import GreedyNeighborsAgent
 from agents.sarsa import SARSAAgent
 
 from networks.cycle import cycle_net
 from networks.random import random_net
 
-def main(args):
-
-    for i in tqdm(range(args.experiments)):
+def benchmark(args):
         
-        # Generate random network
-        n = np.random.randint(args.nmin, args.nmax+1)
+    # Generate random network
+    n = np.random.randint(args.nmin, args.nmax+1)
 
-        # p = np.random.uniform(0, 1)
-        # C, Q = random_net(n= n, p= p)
+    dth = np.random.randint(1, args.dthmax+1)
+    C, Q = cycle_net(n= n, dth= dth)
+    
+    DATA = {}
+    DATA["physical network"] = {}
+    DATA["physical network"]["nodes"] = list(C.nodes())
+    DATA["physical network"]["edges"] = list(C.edges())
+    DATA["virtual network"] = {}
+    DATA["virtual network"]["nodes"] = list(Q.nodes())
+    DATA["virtual network"]["edges"] = list(Q.edges())
 
-        dth = np.random.randint(1, args.dthmax+1)
-        C, Q = cycle_net(n= n, dth= dth)
-        
-        DATA = {}
-        DATA["physical network"] = {}
-        DATA["physical network"]["nodes"] = list(C.nodes())
-        DATA["physical network"]["edges"] = list(C.edges())
-        DATA["virtual network"] = {}
-        DATA["virtual network"]["nodes"] = list(Q.nodes())
-        DATA["virtual network"]["edges"] = list(Q.edges())
+    # Initialize the Environement
+    env = RandomEnvironement(physical_network = C, 
+                                virtual_network = Q)
 
-        # Initialize the Environement
-        env = RandomEnvironement(physical_network = C, 
-                                    virtual_network = Q)
+    #### Random Agent ###
+    agent = RandomNeighborsAgent(physical_network = C, 
+                                virtual_network = Q)
 
-        #### Random Agent ###
-        agent = RandomNeighborsAgent(physical_network = C, 
-                                    virtual_network = Q)
+    R = run_experiment(env, agent, args.epochs)
+    DATA['random-agent'] = R
 
-        R = run_experiment(env, agent, args.epochs)
-        DATA['random-agent'] = R
+    #### Greedy Neighbnors Agent ###
+    agent = GreedyNeighborsAgent(physical_network = C, 
+                                virtual_network = Q)
 
-        #### Greedy Neighbnors Agent ###
-        agent = GreedyNeighborsAgent(physical_network = C, 
-                                    virtual_network = Q)
+    R = run_experiment(env, agent, args.epochs)
+    DATA['greedy-neighbors-agent'] = R
 
-        R = run_experiment(env, agent, args.epochs)
-        DATA['greedy-neighbors-agent'] = R
+    # #### SARSA ####
+    SARSA = []
+    for e in np.arange(0, 1+args.delta, args.delta):
+        for a in np.arange(0, 1+args.delta, args.delta):
+            for y in np.arange(0, 1+args.delta, args.delta):
 
-        # #### SARSA ####
-        SARSA = []
-        for e in np.arange(0, 1+args.delta, args.delta):
-            for a in np.arange(0, 1+args.delta, args.delta):
-                for y in np.arange(0, 1+args.delta, args.delta):
+                D = {}
+                D['param'] = {}
+                D['param']['epsilon'] = e 
+                D['param']['alpha'] = a 
+                D['param']['gamma'] = y 
 
-                    D = {}
-                    D['param'] = {}
-                    D['param']['epsilon'] = e 
-                    D['param']['alpha'] = a 
-                    D['param']['gamma'] = y 
+                agent = SARSAAgent(physical_network = C, 
+                            virtual_network = Q,
+                            epsilon = e,
+                            alpha = a,
+                            gamma = y)
 
-                    agent = SARSAAgent(physical_network = C, 
-                                virtual_network = Q,
-                                epsilon = e,
-                                alpha = a,
-                                gamma = y)
+                R = run_experiment(env, agent, args.epochs)
+                D['reward'] = R
+                SARSA.append(D)
 
-                    R = run_experiment(env, agent, args.epochs)
-                    D['reward'] = R
-                    SARSA.append(D)
+    DATA['sarsa'] = SARSA
 
-        DATA['sarsa'] = SARSA
-
-        # Save data
-        if not os.path.isdir(args.savepath):
-            os.makedirs(args.savepath)
-        with open(args.savepath + '{}.json'.format(i), 'w') as fp:
-            json.dump(DATA, fp)
+    # Save data
+    with open(args.savepath + '{}.json'.format(uuid.uuid4().hex), 'w') as fp:
+        json.dump(DATA, fp)
 
 def run_experiment(env, agent, epochs):
 
@@ -128,24 +121,6 @@ def run_experiment(env, agent, epochs):
         R.append(r)
     return R
 
-def parser(data: List[Dict])-> Tuple[object]:
-
-    random = []
-    greedy = []
-    sarsa = []
-    for d in data:
-        n = max(d['physical network']['nodes'][-1], d['virtual network']['nodes'][-1])
-
-        random.append([n, d['random-agent']])
-        greedy.append([n, d['greedy-neighbors-agent']])
-        for s in d['sarsa']:
-            sarsa.append([n, s['param']['epsilon'], s['param']['alpha'], s['param']['gamma'], s['reward']])
-
-    random = pd.DataFrame(random, columns= ['nodes', 'reward'])
-    greedy = pd.DataFrame(greedy, columns= ['nodes', 'reward'])
-    sarsa = pd.DataFrame(sarsa, columns= ['nodes', 'epsilon', 'alpha', 'gamma', 'reward'])
-    return random, greedy, sarsa
-
 if __name__ == "__main__":
     parser = ArgumentParser()
 
@@ -164,5 +139,13 @@ if __name__ == "__main__":
     # Saving data
     parser.add_argument("--savepath", type=str, default="data/benchmark/") 
 
+    # Multiprocessing
+    parser.add_argument("--num_cpu", type=int, default=4) 
+
     args = parser.parse_args()
-    main(args)
+
+    if not os.path.isdir(args.savepath):
+        args.savepath += datetime.now().strftime("%Y%m%d%H%M%S")+"/"
+        os.makedirs(args.savepath)
+
+    process_map(benchmark, [args]*args.experiments, max_workers=args.num_cpu)

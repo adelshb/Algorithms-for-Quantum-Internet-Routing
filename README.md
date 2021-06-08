@@ -6,7 +6,6 @@ Quantum Internet Routing with Reinforcement Learning.
 * Python 3.6+
 * NetworkX
 * tqdm
-* Pandas
 
 ```shell
 pip install -r requirements
