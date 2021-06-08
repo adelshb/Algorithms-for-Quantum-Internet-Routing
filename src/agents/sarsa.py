@@ -14,6 +14,7 @@ State–action–reward–state–action (SARSA) Agent for Quantum Internet Netw
 
 import random
 
+from networkx.classes import Graph
 from agents.agent import Agent
 
 class SARSAAgent(Agent):
@@ -22,8 +23,8 @@ class SARSAAgent(Agent):
     """
 
     def __init__(self,
-                 physical_network: object,
-                 virtual_network: object,
+                 physical_network: Graph,
+                 virtual_network: Graph,
                  epsilon: float,
                  alpha: float,
                  gamma: float) -> None:

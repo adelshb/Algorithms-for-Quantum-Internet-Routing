@@ -14,6 +14,7 @@ Epsilon-Greddy Bandit Algorithm.
 from typing import Optional
 
 import random
+from networkx.classes import Graph
 
 from agents.agent import Agent
 
@@ -23,8 +24,8 @@ class EGreedyBanditAgent(Agent):
     """
 
     def __init__(self,
-                 physical_network: object,
-                 virtual_network: object,
+                 physical_network: Graph,
+                 virtual_network: Graph,
                  epsilon: float) -> None:
         """
         Args:

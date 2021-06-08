@@ -14,9 +14,9 @@
 Random Agent for Quantum Internet Network Routing.
 """
 
-#from typing import List, Dict
 import random
 
+from networkx.classes import Graph
 from agents.agent import Agent
 
 class RandomNeighborsAgent(Agent):
@@ -27,8 +27,8 @@ class RandomNeighborsAgent(Agent):
     """
 
     def __init__(self,
-                 physical_network: object,
-                 virtual_network: object) -> None:
+                 physical_network: Graph,
+                 virtual_network: Graph) -> None:
         """
         Args:
             physical_network: classical network

@@ -15,7 +15,9 @@ This module implements the abstract base class for quantum internet network modu
 """
 
 from abc import ABC, abstractmethod
-from typing import Union, Dict, Optional, Tuple, List
+from typing import Dict
+
+from networkx.classes import Graph
 
 class QuantumInternetNetwork(ABC):
     """
@@ -25,8 +27,9 @@ class QuantumInternetNetwork(ABC):
     """
     @abstractmethod
     def __init__(self,
-                 physical_network: List[List[float]],
-                 virtual_network: List[List[float]]) -> None:
+                 physical_network: Graph,
+                 virtual_network: Graph) -> None:
+
         self._physical_network = physical_network
         self._virtual_init_network = virtual_network
         self._virtual_network_state = virtual_network.copy()
@@ -52,32 +55,32 @@ class QuantumInternetNetwork(ABC):
         raise NotImplementedError()
 
     @property
-    def physical_network(self) -> Optional[List[List[float]]]:
+    def physical_network(self) -> Graph:
         """ Returns physical network. """
         return self._physical_network
 
     @physical_network.setter
-    def physical_network(self, value: List[List[float]]) -> None:
+    def physical_network(self, value: Graph) -> None:
         """ Sets physical network. """
         self._physical_network = value
 
     @property
-    def virtual_network_state(self) -> Optional[List[List[float]]]:
+    def virtual_network_state(self) -> Graph:
         """ Returns current virtual network state. """
         return self._virtual_network_state
 
     @virtual_network_state.setter
-    def virtual_network_state(self, value: List[List[float]]) -> None:
+    def virtual_network_state(self, value: Graph) -> None:
         """ Sets current virtual network state. """
         self._virtual_network_state = value
 
     @property
-    def virtual_init_network(self) -> Optional[List[List[float]]]:
+    def virtual_init_network(self) -> Graph:
         """ Returns initial virtual network. """
         return self._virtual_init_network
 
     @virtual_init_network.setter
-    def virtual_init_network(self, value: List[List[float]]) -> None:
+    def virtual_init_network(self, value: Graph) -> None:
         """ Sets initial virtual network. """
         self._virtual_init_network = value
 
@@ -88,12 +91,12 @@ class QuantumInternetNetworkResult(ABC):
         super().__init__()
 
     @property
-    def state(self) -> object:
+    def state(self) -> Graph:
         """ return current state"""
         return self._state
 
     @state.setter
-    def state(self, value: object) -> None:
+    def state(self, value: Graph) -> None:
         """ set estimations values """
         self._state = value
 
@@ -118,7 +121,7 @@ class QuantumInternetNetworkResult(ABC):
         self._sender = value
 
     @property
-    def reciever(self) -> object:
+    def reciever(self) -> int:
         """ return reciever's index"""
         return self._reciever
 

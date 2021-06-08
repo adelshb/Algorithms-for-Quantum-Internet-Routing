@@ -14,6 +14,7 @@ Greedy Neighbors Algorithm for Quantum Internet Network Routing proposed in http
 
 from agents.agent import Agent
 import networkx as nx
+from networkx.classes import Graph
 
 class GreedyNeighborsAgent(Agent):
     """
@@ -21,8 +22,8 @@ class GreedyNeighborsAgent(Agent):
     """
 
     def __init__(self,
-                 physical_network: object,
-                 virtual_network: object) -> None:
+                 physical_network: Graph,
+                 virtual_network: Graph) -> None:
         """
         Args:
             physical_network: classical network

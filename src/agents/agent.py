@@ -15,8 +15,9 @@ This module implements the abstract base class for agent modules.
 """
 
 from abc import ABC, abstractmethod
-from typing import Union, Dict, Optional, Tuple, List
+from typing import Optional, List
 
+from networkx.classes import Graph
 
 class Agent(ABC):
     """
@@ -26,12 +27,13 @@ class Agent(ABC):
     """
     @abstractmethod
     def __init__(self,
-                 physical_network: object,
-                 virtual_network: object) -> None:
+                 physical_network: Graph,
+                 virtual_network: Graph) -> None:
+
         self._physical_network = physical_network
         self._virtual_init_network = virtual_network
 
-    def run(self, state: object, sender: int, reciever: int, reward: Optional[float]= None):
+    def run(self, state: Graph, sender: int, reciever: int, reward: Optional[float]= None):
         """Execute the policy with selected Environement for given State and Action.
         Args:
             state: current state of the virtual network.
@@ -49,25 +51,25 @@ class Agent(ABC):
         return self._run(state, sender, reciever, reward)
 
     @abstractmethod
-    def _run(self, state: object, sender: int, reciever: int, reward: Optional[float]=None) -> int:
+    def _run(self, state: Graph, sender: int, reciever: int, reward: Optional[float]=None) -> int:
         raise NotImplementedError()
 
     @property
-    def physical_network(self) -> Optional[List[List[float]]]:
+    def physical_network(self) -> Graph:
         """ Returns physical network. """
         return self._physical_network
 
     @physical_network.setter
-    def physical_network(self, value: List[List[float]]) -> None:
+    def physical_network(self, value: Graph) -> None:
         """ Sets physical network. """
         self._physical_network = value
 
     @property
-    def virtual_init_network(self) -> Optional[List[List[float]]]:
+    def virtual_init_network(self) -> Graph:
         """ Returns initial virtual network. """
         return self._virtual_init_network
 
     @virtual_init_network.setter
-    def virtual_init_network(self, value: List[List[float]]) -> None:
+    def virtual_init_network(self, value: Graph) -> None:
         """ Sets initial virtual network. """
         self._virtual_init_network = value

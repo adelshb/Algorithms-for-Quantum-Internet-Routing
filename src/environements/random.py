@@ -14,11 +14,12 @@
 Random Environement for Quantum Internet Network.
 """
 
-from typing import List, Dict, Tuple
+from typing import Dict, Tuple
 import random
 import numpy as np
 
 import networkx as nx
+from networkx.classes import Graph
 
 from environements.qin import QuantumInternetNetwork, QuantumInternetNetworkResult
 
@@ -26,8 +27,8 @@ class RandomEnvironement(QuantumInternetNetwork):
     """Random Events Environement for Quantum Internet Network."""
 
     def __init__(self,
-                 physical_network: object,
-                 virtual_network: object,
+                 physical_network: Graph,
+                 virtual_network: Graph,
                  ) -> None:
         """
         Args:
