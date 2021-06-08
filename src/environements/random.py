@@ -46,7 +46,8 @@ class RandomEnvironement(QuantumInternetNetwork):
         nodes = list(self._physical_network.nodes)
         for n in nodes:
             nodes.remove(n)
-            paths.append(list(nx.all_simple_paths(self._physical_network, source=n, target=nodes)))
+            for t in nodes:
+                paths.append(list(nx.all_simple_paths(self._physical_network, source=n, target=t)))
         self._paths = [j for i in paths for j in i]
         v = np.random.rand(len(self._paths))
         self._dist = v / np.linalg.norm(v)

@@ -20,7 +20,7 @@ import os
 
 import networkx as nx
 import numpy as np
-import pandas as pd
+#import pandas as pd
 
 from environements.random import RandomEnvironement
 
