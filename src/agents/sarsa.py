@@ -44,20 +44,20 @@ class SARSAAgent(Agent):
         self._gamma = gamma
 
         # Initialize Q function
-        n = len(self._edges)
-        possible_states = [tuple([int(j) for j in '{:0{}b}'.format(i, n)]) for i in range(2**n)]
         self._Q = {}
-        #for r in range(self._size):
-        for r in list(self._virtual_network.nodes()):
-            self._Q[r] = {}
-            #for s in range(self._size):
-            for s in list(self._virtual_network.nodes()):
-                if s != r:
-                    self._Q[r][s]={}
-                    for n in list(self._virtual_network.neighbors(s)):
-                        self._Q[r][s][n]={}
-                        for state in possible_states:
-                            self._Q[r][s][n][state]=0
+        # n = len(self._edges)
+        # possible_states = [tuple([int(j) for j in '{:0{}b}'.format(i, n)]) for i in range(2**n)]
+        # #for r in range(self._size):
+        # for r in list(self._virtual_network.nodes()):
+        #     self._Q[r] = {}
+        #     #for s in range(self._size):
+        #     for s in list(self._virtual_network.nodes()):
+        #         if s != r:
+        #             self._Q[r][s]={}
+        #             for n in list(self._virtual_network.neighbors(s)):
+        #                 self._Q[r][s][n]={}
+        #                 for state in possible_states:
+        #                     self._Q[r][s][n][state]=0
 
         # Initialize number of epochs
         self._N = 0
@@ -66,7 +66,7 @@ class SARSAAgent(Agent):
 
         tup =  []
         edges = state.edges()
-        for i,e in enumerate(self._edges):
+        for e in self._edges:
             if e in edges:
                 tup.append(1)
             else:
@@ -92,7 +92,10 @@ class SARSAAgent(Agent):
             ind = self.Qindex(state)
             Q = {}
             for n in neighbors:
-                Q[n] =  self._Q[reciever][sender][n][ind]
+                try:
+                    Q[n] =  self._Q[reciever][sender][n][ind]
+                except:
+                    Q[n] = 0
             return max(Q)
         else:  
             return random.choice(neighbors)
@@ -100,16 +103,30 @@ class SARSAAgent(Agent):
     def _run(self, state, sender, reciever, reward):
 
         action = self.policy(state, sender, reciever)
+        ind = self.Qindex(state)
 
         if self._N > 0:
-            ind = self.Qindex(state)
+
+            if reciever not in self._Q:
+                self._Q[reciever] = {}
+            if sender not in self._Q[reciever]:
+                self._Q[reciever][sender] = {}
+            if action not in self._Q[reciever][sender]:
+                self._Q[reciever][sender][action] = {}
+            if ind not in self._Q[reciever][sender][action]:
+                self._Q[reciever][sender][action][ind] = 0
 
             self._Q[reciever][sender][action][ind] += self._alpha * (reward + self._gamma * self._Q[self._lastreciever][self._lastsender][self._lastaction][self.Qindex(self._laststate)] - self._Q[reciever][sender][action][ind])
+        elif self._N == 0:
+            self._Q[reciever] = {}
+            self._Q[reciever][sender] = {}
+            self._Q[reciever][sender][action] = {}
+            self._Q[reciever][sender][action][ind] = 0
 
         self._N += 1
         self._lastsender = sender
         self._lastreciever = reciever
         self._lastaction = action
-        self._laststate = state
+        self._laststate = state.copy()
 
         return action
