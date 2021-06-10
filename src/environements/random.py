@@ -47,13 +47,21 @@ class RandomEnvironement(QuantumInternetNetwork):
         for n in nodes:
             nodes.remove(n)
             for t in nodes:
-                paths.append(list(nx.all_simple_paths(self._physical_network, source=n, target=t)))
+                try:
+                    paths.append(list(nx.all_simple_paths(self._physical_network, source=n, target=t)))
+                except:
+                    pass
         self._paths = [j for i in paths for j in i]
+
         v = np.random.rand(len(self._paths))
         self._dist = v / np.linalg.norm(v)
+        # self._dist = np.zeros(len(self._paths))
+        # self._dist[np.random.randint(0, len(self._paths))] = 1
 
         # Generate first sender and reciever
         self._sender, self._reciever = self.gsr_event()
+
+        self._num_success = 0
 
     def compute_reward(self, refresh, success) -> float:
         """ Compute the reward.
@@ -63,10 +71,11 @@ class RandomEnvironement(QuantumInternetNetwork):
 
         if refresh:
             return -10
+            self._num_success = 0
         elif success:
-            return 10
+            return 1.1*(self._num_success+1)
         else:
-            return 1
+            return 0.01
 
     def gsr_event(self) -> Tuple[int, int]:
         """ Generate a sender reciever event. Generate a sender and a reciever. They are selected randomly.
@@ -106,6 +115,7 @@ class RandomEnvironement(QuantumInternetNetwork):
         if self._sender == self._reciever:
             self._sender, self._reciever = self.gsr_event()
             success = True
+            self._num_success +=1
         
         # Compute the reward.
         rew = self.compute_reward(refresh, success)

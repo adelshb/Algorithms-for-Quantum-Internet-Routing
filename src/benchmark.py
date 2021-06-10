@@ -30,14 +30,16 @@ from agents.greed_routing_agent import GreedyNeighborsAgent
 from agents.sarsa import SARSAAgent
 
 from networks.cycle import cycle_net
-from networks.random import random_net
+# from networks.random import random_net
+# from networks.random_geom import random_net
 
 def benchmark(args):
         
     # Generate random network
     n = np.random.randint(args.nmin, args.nmax+1)
 
-    dth = np.random.randint(1, args.dthmax+1)
+    # dth = np.random.randint(1, args.dthmax+1)
+    dth=4
     C, Q = cycle_net(n= n, dth= dth)
     
     DATA = {}
@@ -48,11 +50,10 @@ def benchmark(args):
     DATA["virtual network"]["nodes"] = list(Q.nodes())
     DATA["virtual network"]["edges"] = list(Q.edges())
 
-    # Initialize the Environement
-    env = RandomEnvironement(physical_network = C, 
-                                virtual_network = Q)
 
     #### Random Agent ###
+    env = RandomEnvironement(physical_network = C, 
+                                virtual_network = Q)
     agent = RandomNeighborsAgent(physical_network = C, 
                                 virtual_network = Q)
 
@@ -60,6 +61,8 @@ def benchmark(args):
     DATA['random-agent'] = R
 
     #### Greedy Neighbnors Agent ###
+    env = RandomEnvironement(physical_network = C, 
+                                virtual_network = Q)
     agent = GreedyNeighborsAgent(physical_network = C, 
                                 virtual_network = Q)
 
@@ -67,26 +70,49 @@ def benchmark(args):
     DATA['greedy-neighbors-agent'] = R
 
     # #### SARSA ####
+
+    e=0.5
+    a=0.5
+    y=0.5
+    D = {}
+    D['param'] = {}
+    D['param']['epsilon'] = e 
+    D['param']['alpha'] = a 
+    D['param']['gamma'] = y
+    env = RandomEnvironement(physical_network = C, 
+                                virtual_network = Q)
+    agent = SARSAAgent(physical_network = C, 
+                virtual_network = Q,
+                epsilon = e,
+                alpha = a,
+                gamma = y)
+
+    R = run_experiment(env, agent, args.epochs)
+    D['reward'] = R
     SARSA = []
-    for e in np.arange(0, 1+args.delta, args.delta):
-        for a in np.arange(0, 1+args.delta, args.delta):
-            for y in np.arange(0, 1+args.delta, args.delta):
+    SARSA.append(D)
+ 
+    # for e in np.arange(0, 1+args.delta, args.delta):
+    #     for a in np.arange(0, 1+args.delta, args.delta):
+    #         for y in np.arange(0, 1+args.delta, args.delta):
 
-                D = {}
-                D['param'] = {}
-                D['param']['epsilon'] = e 
-                D['param']['alpha'] = a 
-                D['param']['gamma'] = y 
+    #             D = {}
+    #             D['param'] = {}
+    #             D['param']['epsilon'] = e 
+    #             D['param']['alpha'] = a 
+    #             D['param']['gamma'] = y 
 
-                agent = SARSAAgent(physical_network = C, 
-                            virtual_network = Q,
-                            epsilon = e,
-                            alpha = a,
-                            gamma = y)
+    #             env = RandomEnvironement(physical_network = C, 
+    #                             virtual_network = Q)
+    #             agent = SARSAAgent(physical_network = C, 
+    #                         virtual_network = Q,
+    #                         epsilon = e,
+    #                         alpha = a,
+    #                         gamma = y)
 
-                R = run_experiment(env, agent, args.epochs)
-                D['reward'] = R
-                SARSA.append(D)
+    #             R = run_experiment(env, agent, args.epochs)
+    #             D['reward'] = R
+    #             SARSA.append(D)
 
     DATA['sarsa'] = SARSA
 
@@ -144,8 +170,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    args.savepath += datetime.now().strftime("%Y%m%d%H%M%S")+"/"
     if not os.path.isdir(args.savepath):
-        args.savepath += datetime.now().strftime("%Y%m%d%H%M%S")+"/"
         os.makedirs(args.savepath)
 
     process_map(benchmark, [args]*args.experiments, max_workers=args.num_cpu)

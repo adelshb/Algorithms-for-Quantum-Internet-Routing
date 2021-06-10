@@ -45,21 +45,6 @@ class SARSAAgent(Agent):
 
         # Initialize Q function
         self._Q = {}
-        # n = len(self._edges)
-        # possible_states = [tuple([int(j) for j in '{:0{}b}'.format(i, n)]) for i in range(2**n)]
-        # #for r in range(self._size):
-        # for r in list(self._virtual_network.nodes()):
-        #     self._Q[r] = {}
-        #     #for s in range(self._size):
-        #     for s in list(self._virtual_network.nodes()):
-        #         if s != r:
-        #             self._Q[r][s]={}
-        #             for n in list(self._virtual_network.neighbors(s)):
-        #                 self._Q[r][s][n]={}
-        #                 for state in possible_states:
-        #                     self._Q[r][s][n][state]=0
-
-        # Initialize number of epochs
         self._N = 0
 
     def Qindex(self, state):
@@ -95,8 +80,12 @@ class SARSAAgent(Agent):
                 try:
                     Q[n] =  self._Q[reciever][sender][n][ind]
                 except:
-                    Q[n] = 0
-            return max(Q)
+                    pass
+                    #Q[n] = 0
+            try:
+                max(Q) 
+            except:
+                return random.choice(neighbors)
         else:  
             return random.choice(neighbors)
 

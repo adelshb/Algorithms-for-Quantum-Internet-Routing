@@ -15,7 +15,8 @@ Random physical and virtual network.
 """
 
 import networkx as nx
-from networkx.generators.random_graphs import random_geometric_graph, watts_strogatz_graph
+from networkx.generators.geometric import random_geometric_graph
+from networkx.generators.random_graphs import watts_strogatz_graph
 
 def random_net(n =10, radius = 0.1, dth = 2, p = 0.1):
 
@@ -26,6 +27,7 @@ def random_net(n =10, radius = 0.1, dth = 2, p = 0.1):
     # Virtual network
     # small world network
     Q = watts_strogatz_graph(n, k=dth, p=p, seed=None)
+    Q.add_edges_from(C.edges)
     Q.remove_nodes_from(list(nx.isolates(Q)))
 
     return C, Q
