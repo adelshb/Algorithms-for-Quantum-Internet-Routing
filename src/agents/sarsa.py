@@ -63,7 +63,7 @@ class SARSAAgent(Agent):
         Returns:
             The action.
         """
-
+    
         # Collect sender's neighbors on current state
         neighbors = list(state.neighbors(sender))
 
@@ -83,10 +83,10 @@ class SARSAAgent(Agent):
                     pass
                     #Q[n] = 0
             try:
-                max(Q) 
+                return max(Q)
             except:
                 return random.choice(neighbors)
-        else:  
+        else: 
             return random.choice(neighbors)
 
     def _run(self, state, sender, reciever, reward):

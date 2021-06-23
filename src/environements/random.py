@@ -70,8 +70,8 @@ class RandomEnvironement(QuantumInternetNetwork):
         """
 
         if refresh:
-            return -10
             self._num_success = 0
+            return -10 
         elif success:
             return 1.1*(self._num_success+1)
         else:

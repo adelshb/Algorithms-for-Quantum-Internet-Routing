@@ -46,8 +46,7 @@ class QuantumInternetNetwork(ABC):
             ValueError: If the Action has not been provided
         """
         if action is None:
-            raise ValueError("An Action "
-                            "must be supplied to run the environement.")
+            raise ValueError("An Action must be supplied to run the environement.")
         return self._run(action)
 
     @abstractmethod
