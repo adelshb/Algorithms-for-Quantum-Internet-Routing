@@ -64,16 +64,21 @@ class SARSAAgent(Agent):
             The action.
         """
     
-        # Collect sender's neighbors on current state
-        neighbors = list(state.neighbors(sender))
+        # # Collect sender's neighbors on current state
+        # neighbors = list(state.neighbors(sender))
 
-        if not neighbors:
-            # If the sender has no neighbor on the current state collect sender's neighbors on initial virtual netwok
-            neighbors = list(self._virtual_network.neighbors(sender))
-            if not neighbors:
-                raise Exception('The sender has no neighbor.')
-        
+        # if not neighbors:
+        #     # If the sender has no neighbor on the current state collect sender's neighbors on initial virtual netwok
+        #     neighbors = list(self._virtual_network.neighbors(sender))
+        #     if not neighbors:
+        #         raise Exception('The sender has no neighbor.')
+        neighbors = list(self._virtual_network.nodes)
+
         if random.random() < (1 - self._epsilon):
+
+            if reciever in neighbors:
+                return reciever
+
             ind = self.Qindex(state)
             Q = {}
             for n in neighbors:

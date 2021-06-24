@@ -109,7 +109,9 @@ class RandomEnvironement(QuantumInternetNetwork):
             self._state = self._virtual_network.copy()
             refresh = True
         else:
-            raise Exception('Selected action not possible. There is no edge between the two nodes')
+            self._state = self._virtual_network.copy()
+            refresh = True
+            #raise Exception('Selected action not possible. There is no edge between the two nodes')
 
         # Check if the sender reached the reciever.
         if self._sender == self._reciever:
