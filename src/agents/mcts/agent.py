@@ -19,7 +19,7 @@ from networkx.classes import Graph
 
 import random
 from networkx.classes.function import neighbors
-import numpy as np
+from numpy import ndarray
 
 from agents.agent import Agent
 from agents.mcts.tree import MCtree
@@ -35,7 +35,7 @@ class MCTSAgent(Agent):
     def __init__(self,
                  physical_network: Graph,
                  virtual_network: Graph,
-                 prob_dist: np.Array,
+                 prob_dist: ndarray,
                  N: int = 1000,
                  c: float = 2) -> None:
         """
@@ -53,10 +53,6 @@ class MCTSAgent(Agent):
         self._prob_dist = prob_dist
         self._N = N
         self._c = c
-
-        # Initialize Monte Carlo tree and current node
-        self._tree = MCtree(init_state=self._virtual_network, c = self._c)
-        self._curr = 1
     
     def rollout(self, state: Graph, sender: int) -> float:
         """ Simulate a random routing until network refresh. Return the obtained reward."""
@@ -68,10 +64,11 @@ class MCTSAgent(Agent):
         reward = 0 
         refresh = False
         while True:
-            if refresh:
+            neighbors = list(state.neighbors(sender))
+            if refresh or not neighbors:
                 return reward
             
-            action = random.choice(list(state.neighbors(sender)))
+            action = random.choice(neighbors)
             result = env.run(action= action)
 
             reward += result.reward
@@ -79,10 +76,10 @@ class MCTSAgent(Agent):
             sender = result.sender
             refresh = result.refresh
     
-    def expand(self, state: Graph, node: int) -> None:
+    def expand(self, state: Graph, sender: int, node:int) -> None:
         """ Expand the Monte Carlo tree"""
-        neighbors = list(state.neighbors(node))
-        states = [state.copy().remove_edge(node,n) for n in neighbors]
+        neighbors = list(state.neighbors(sender))
+        states = [state.copy().remove_edge(sender,n) for n in neighbors]
         self._tree.expand(node=node, N=len(neighbors), states=states, actions=neighbors)
         return None
 
@@ -91,24 +88,32 @@ class MCTSAgent(Agent):
         Returns:
             The action.
         """
-        
+
         states_ind = self._tree.successors(1)
         Q = {}
         for s in states_ind:
             Q[s]= self._tree.Q(s)
-
-        return self._tree.action(max(Q))
+        return self._tree.action(max(Q, key=Q.get))
 
     def _run(self, state: Graph, sender: int, reciever: int, reward: float):
 
+        neighbors = list(state.neighbors(sender))
+        if reciever in neighbors:
+            return reciever
+
+        # Initialize Monte Carlo tree and current node
+        self._tree = MCtree(init_state=state, c= self._c)
+
         for __ in range(self._N):
-            if not self._tree.is_leaf(self._curr):
+            self._curr = 1
+            while not self._tree.is_leaf(self._curr):
                 succ = self._tree.successors(self._curr)
                 ucb1 = [self._tree.ucb1(n) for n in succ]
                 self._curr = succ[ucb1.index(max(ucb1))]
 
-            if self._tree.count(self._curr) == 0:
-                self.expand(self._curr)
+            if not self._tree.count(self._curr) == 0:
+                # self.expand(state, self._curr)
+                self.expand(state, sender, self._curr)
                 self._curr = self._tree.successors(self._curr)[0]
 
             mc_reward = self.rollout(state, sender)

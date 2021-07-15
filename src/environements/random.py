@@ -14,9 +14,10 @@
 Random Environement for Quantum Internet Network.
 """
 
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Optional
 import random
 import numpy as np
+from numpy import  ndarray
 
 import networkx as nx
 from networkx.classes import Graph
@@ -29,7 +30,7 @@ class RandomEnvironement(QuantumInternetNetwork):
     def __init__(self,
                  physical_network: Graph,
                  virtual_network: Graph,
-                 prob_dist: np.Array = None,
+                 prob_dist: Optional[ndarray] = None,
                  ) -> None:
         """
         Args:
