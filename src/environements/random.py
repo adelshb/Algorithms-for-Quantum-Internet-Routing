@@ -29,6 +29,7 @@ class RandomEnvironement(QuantumInternetNetwork):
     def __init__(self,
                  physical_network: Graph,
                  virtual_network: Graph,
+                 prob_dist: np.Array = None,
                  ) -> None:
         """
         Args:
@@ -53,10 +54,11 @@ class RandomEnvironement(QuantumInternetNetwork):
                     pass
         self._paths = [j for i in paths for j in i]
 
-        v = np.random.rand(len(self._paths))
-        self._dist = v / np.linalg.norm(v)
-        # self._dist = np.zeros(len(self._paths))
-        # self._dist[np.random.randint(0, len(self._paths))] = 1
+        if prob_dist is None:
+            v = np.random.rand(len(self._paths))
+            self._dist = v / np.linalg.norm(v)
+        else:
+            self._dist = prob_dist
 
         # Generate first sender and reciever
         self._sender, self._reciever = self.gsr_event()
@@ -87,8 +89,7 @@ class RandomEnvironement(QuantumInternetNetwork):
         path = random.choices(self._paths, self._dist)[0]
         return path[0], path[-1]
                  
-    def _run(self,
-        action: int) ->  Dict:
+    def _run(self, action: int) ->  Dict:
 
         refresh = False
         success = False
@@ -127,5 +128,6 @@ class RandomEnvironement(QuantumInternetNetwork):
         result.reward = rew 
         result.sender = self._sender
         result.reciever = self._reciever
+        result.refresh = refresh
         
         return result

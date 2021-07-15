@@ -129,4 +129,14 @@ class QuantumInternetNetworkResult(ABC):
         """ set reciever's index"""
         self._reciever = value
 
+    @property
+    def refresh(self) -> bool:
+        """ return if the entanglement refreshement occured"""
+        return self._refresh
+
+    @refresh.setter
+    def refresh(self, value: bool) -> None:
+        """ set if the entanglement refreshement occured"""
+        self._refresh = value
+
     
