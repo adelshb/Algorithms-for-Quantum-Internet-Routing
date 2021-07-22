@@ -15,7 +15,7 @@ This module implements the abstract base class for agent modules.
 """
 
 from abc import ABC, abstractmethod
-from typing import Optional, List
+from typing import Optional
 
 from networkx.classes import Graph
 
@@ -33,7 +33,7 @@ class Agent(ABC):
         self._physical_network = physical_network
         self._virtual_init_network = virtual_network
 
-    def run(self, state: Graph, sender: int, reciever: int, reward: Optional[float]= None):
+    def run(self, state: Graph, sender: int, reciever: int, reward: Optional[float]= None, success: Optional[bool]=None):
         """Execute the policy with selected Environement for given State and Action.
         Args:
             state: current state of the virtual network.

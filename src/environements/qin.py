@@ -139,4 +139,14 @@ class QuantumInternetNetworkResult(ABC):
         """ set if the entanglement refreshement occured"""
         self._refresh = value
 
+    @property
+    def success(self) -> bool:
+        """ return if the sender's state arrived at the reciever state"""
+        return self._success
+
+    @success.setter
+    def success(self, value: bool) -> None:
+        """ set if the sender's state arrived at the reciever state"""
+        self._success = value
+
     

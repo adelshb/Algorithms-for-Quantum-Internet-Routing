@@ -76,7 +76,6 @@ class RandomEnvironement(QuantumInternetNetwork):
             self._sender, self._reciever = self._sr_events[self._sr_count]
             self._sr_count+=1
             
-
         self._num_success = 0
 
     def compute_reward(self, refresh, success) -> float:
@@ -98,7 +97,6 @@ class RandomEnvironement(QuantumInternetNetwork):
         Returns:
             Vertices label of the sender and reciver.
         """
-        
         # Randmly select a path and select sender/reciever
         path = random.choices(self._paths, self._dist)[0]
         return path[0], path[-1]
@@ -151,5 +149,6 @@ class RandomEnvironement(QuantumInternetNetwork):
         result.sender = self._sender
         result.reciever = self._reciever
         result.refresh = refresh
+        result.success = success
         
         return result

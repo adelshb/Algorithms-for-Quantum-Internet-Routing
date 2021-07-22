@@ -14,11 +14,10 @@
 Monte Carlo Tree Search Simulation for Quantum Internet Network Routing.
 """
 
-import networkx as nx
+from typing import Optional, List, Tuple
 from networkx.classes import Graph
 
 import random
-from networkx.classes.function import neighbors
 from numpy import ndarray
 
 from agents.agent import Agent
@@ -35,13 +34,16 @@ class MCTSAgent(Agent):
     def __init__(self,
                  physical_network: Graph,
                  virtual_network: Graph,
-                 prob_dist: ndarray,
-                 N: int = 1000,
-                 c: float = 2) -> None:
+                 rollout_epochs: int = 30,
+                 sender_reciever_events: Optional[List[Tuple]] = None,
+                 prob_dist: Optional[ndarray] = None,
+                 N: Optional[int] = 1000,
+                 c: Optional[float] = 2) -> None:
         """
         Args:
             physical_network: classical network.
             virtual_network: initial quantum network.
+            sender_reciever_events: list of sender-reciever events. If None, will generate randomly accordingly to the prob_dit input.
             prob_dist: probability distribution on how the environement select sender/reciever.
             N: number of MC simulation.
             c: coeffcient for the UCB1 score.
@@ -50,16 +52,25 @@ class MCTSAgent(Agent):
         # Get parameters
         self._physical_network = physical_network
         self._virtual_network = virtual_network
+        self._rollout_epochs = rollout_epochs
+        self._sr_events = sender_reciever_events
         self._prob_dist = prob_dist
         self._N = N
         self._c = c
+
+        self._sr_event_count = 0
     
     def rollout(self, state: Graph, sender: int) -> float:
         """ Simulate a random routing until network refresh. Return the obtained reward."""
 
-        env = RandomEnvironement(physical_network = self._physical_network, 
+        if self._sr_events==None:
+            env = RandomEnvironement(physical_network = self._physical_network, 
+                                        virtual_network = state,
+                                        prob_dist = self._prob_dist)
+        else:
+            env = RandomEnvironement(physical_network = self._physical_network,
                                 virtual_network = state,
-                                prob_dist = self._prob_dist)
+                                sender_reciever_events= self._sr_events[self._sr_event_count:])
 
         reward = 0 
         refresh = False
@@ -75,6 +86,28 @@ class MCTSAgent(Agent):
             state = result.state
             sender = result.sender
             refresh = result.refresh
+
+        # else:
+        #     env = RandomEnvironement(physical_network = self._physical_network,
+        #                         virtual_network = state,
+        #                         sender_reciever_events= self._sr_events[self._sr_event_count:])
+
+        #     reward = 0 
+        #     for __ in range(self._rollout_epochs):
+
+        #         neighbors = list(state.neighbors(sender))
+        #         if not neighbors:
+        #             action = sender
+        #         else:
+        #             action = random.choice(neighbors)
+
+        #         result = env.run(action= action)
+
+        #         reward += result.reward
+        #         state = result.state
+        #         sender = result.sender
+
+        #     return reward
     
     def expand(self, state: Graph, sender: int, node:int) -> None:
         """ Expand the Monte Carlo tree"""
@@ -95,7 +128,10 @@ class MCTSAgent(Agent):
             Q[s]= self._tree.Q(s)
         return self._tree.action(max(Q, key=Q.get))
 
-    def _run(self, state: Graph, sender: int, reciever: int, reward: float):
+    def _run(self, state: Graph, sender: int, reciever: int, reward: float, success: Optional[bool] = False):
+
+        if success:
+            self._sr_event_count += 1
 
         neighbors = list(state.neighbors(sender))
         if reciever in neighbors:

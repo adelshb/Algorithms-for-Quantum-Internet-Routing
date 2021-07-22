@@ -43,9 +43,11 @@ class ShortestPathAgent(Agent):
             The action.
         """
         
-        path = nx.shortest_path(self._virtual_network, source=sender, target=reciever, weight=None, method='dijkstra')
-        action = path[1]
-        return action
+        try:
+            path = nx.shortest_path(state, source=sender, target=reciever, weight=None, method='dijkstra')
+            return path[1]
+        except:
+            return sender
 
     def _run(self, state, sender, reciever, reward):
 
