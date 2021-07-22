@@ -14,7 +14,7 @@
 Random Environement for Quantum Internet Network.
 """
 
-from typing import Dict, Tuple, Optional
+from typing import Dict, Tuple, Optional, List
 import random
 import numpy as np
 from numpy import  ndarray
@@ -31,11 +31,14 @@ class RandomEnvironement(QuantumInternetNetwork):
                  physical_network: Graph,
                  virtual_network: Graph,
                  prob_dist: Optional[ndarray] = None,
+                 sender_reciever_events: Optional[List[Tuple]] = None
                  ) -> None:
         """
         Args:
             physical_network: classical network
             virtual_network: initial quantum network
+            prob_dist: probability distribution for sender-reciever event. If None, the selection will be randomly performed of following the sender-reciever events list.
+            sender_reciever_events: list of sender-reciever events. If None, will generate randomly accordingly to the prob_dit input.
         """
         
         # Get parameters
@@ -55,14 +58,24 @@ class RandomEnvironement(QuantumInternetNetwork):
                     pass
         self._paths = [j for i in paths for j in i]
 
-        if prob_dist is None:
-            v = np.random.rand(len(self._paths))
-            self._dist = v / np.linalg.norm(v)
-        else:
-            self._dist = prob_dist
+        if sender_reciever_events==None:
+            self._events = "prob"
+            if prob_dist is None:
+                v = np.random.rand(len(self._paths))
+                self._dist = v / np.linalg.norm(v)
+            else:
+                self._dist = prob_dist
 
-        # Generate first sender and reciever
-        self._sender, self._reciever = self.gsr_event()
+            # Generate first sender and reciever
+            self._sender, self._reciever = self.gsr_event()
+        else:
+            # Get sender-reciever events
+            self._events = "list"
+            self._sr_events = sender_reciever_events
+            self._sr_count = 0
+            self._sender, self._reciever = self._sr_events[self._sr_count]
+            self._sr_count+=1
+            
 
         self._num_success = 0
 
@@ -97,7 +110,11 @@ class RandomEnvironement(QuantumInternetNetwork):
 
         # Check if there is a current sender and reciever. Likely to be used as initialization.
         if self._sender == None or self._reciever == None:
-            self._sender, self._reciever = self.gsr_event()
+            if self._events == "prob":
+                self._sender, self._reciever = self.gsr_event()
+            elif self._events == "list":
+                self._sender, self._reciever = self._sr_events[self._sr_count]
+                self._sr_count+=1
             raise Exception('No sender and/or reciever')
         
         # Evolution to the new state.
@@ -117,7 +134,11 @@ class RandomEnvironement(QuantumInternetNetwork):
 
         # Check if the sender reached the reciever.
         if self._sender == self._reciever:
-            self._sender, self._reciever = self.gsr_event()
+            if self._events == "prob":
+                self._sender, self._reciever = self.gsr_event()
+            elif self._events == "list":
+                self._sender, self._reciever = self._sr_events[self._sr_count]
+                self._sr_count+=1
             success = True
             self._num_success +=1
         
