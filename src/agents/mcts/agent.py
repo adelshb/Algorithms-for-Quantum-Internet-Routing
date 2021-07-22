@@ -100,6 +100,8 @@ class MCTSAgent(Agent):
         neighbors = list(state.neighbors(sender))
         if reciever in neighbors:
             return reciever
+        elif len(neighbors)==0:
+            return sender
 
         # Initialize Monte Carlo tree and current node
         self._tree = MCtree(init_state=state, c= self._c)
@@ -112,9 +114,11 @@ class MCTSAgent(Agent):
                 self._curr = succ[ucb1.index(max(ucb1))]
 
             if not self._tree.count(self._curr) == 0:
-                # self.expand(state, self._curr)
-                self.expand(state, sender, self._curr)
-                self._curr = self._tree.successors(self._curr)[0]
+                if self._curr !=1:
+                    neighbors = list(state.neighbors(self._tree.action(self._curr)))
+                if len(neighbors)>0:
+                    self.expand(state, sender, self._curr)
+                    self._curr = self._tree.successors(self._curr)[0]
 
             mc_reward = self.rollout(state, sender)
             self._tree.backup(self._curr, mc_reward)
