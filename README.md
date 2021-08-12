@@ -8,7 +8,7 @@ Quantum Internet Routing with Reinforcement Learning.
 * tqdm
 
 ```shell
-pip install -r requirements
+pip install -r requirements.txt
 ```
 
 ## License
