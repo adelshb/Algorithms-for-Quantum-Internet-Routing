@@ -74,7 +74,6 @@ class RandomEnvironement(QuantumInternetNetwork):
             self._sr_events = sender_reciever_events
             self._sr_count = 0
             self._sender, self._reciever = self._sr_events[self._sr_count]
-            self._sr_count+=1
             
         self._num_success = 0
 
@@ -135,8 +134,8 @@ class RandomEnvironement(QuantumInternetNetwork):
             if self._events == "prob":
                 self._sender, self._reciever = self.gsr_event()
             elif self._events == "list":
-                self._sender, self._reciever = self._sr_events[self._sr_count]
                 self._sr_count+=1
+                self._sender, self._reciever = self._sr_events[self._sr_count]
             success = True
             self._num_success +=1
         

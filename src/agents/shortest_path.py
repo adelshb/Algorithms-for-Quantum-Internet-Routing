@@ -49,7 +49,7 @@ class ShortestPathAgent(Agent):
         except:
             return sender
 
-    def _run(self, state, sender, reciever, reward):
+    def _run(self, state, sender, reciever, reward, success):
 
         action = self.policy(state, sender, reciever)
 

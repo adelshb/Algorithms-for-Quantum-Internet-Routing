@@ -51,6 +51,6 @@ class GreedyNeighborsAgent(Agent):
             curr = temp_curr    
         return curr
 
-    def _run(self, state, sender, reciever, reward):
+    def _run(self, state, sender, reciever, reward, success):
         action = self.policy(state, sender, reciever)
         return action

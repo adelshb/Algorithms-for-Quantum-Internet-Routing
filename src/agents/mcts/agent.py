@@ -64,50 +64,61 @@ class MCTSAgent(Agent):
         """ Simulate a random routing until network refresh. Return the obtained reward."""
 
         if self._sr_events==None:
+            # env = RandomEnvironement(physical_network = self._physical_network, 
+            #                             virtual_network = state,
+            #                             prob_dist = self._prob_dist)
+
             env = RandomEnvironement(physical_network = self._physical_network, 
-                                        virtual_network = state,
-                                        prob_dist = self._prob_dist)
+                                        virtual_network = state)
+
         else:
+            sr_events = self._sr_events[self._sr_event_count:]
+            sr_events[0] = (sender, self._sr_events[self._sr_event_count][1])
+
+            
+
             env = RandomEnvironement(physical_network = self._physical_network,
                                 virtual_network = state,
-                                sender_reciever_events= self._sr_events[self._sr_event_count:])
+                                sender_reciever_events= sr_events)
+
+        # reward = 0 
+        # refresh = False
+        # while True:
+        #     neighbors = list(state.neighbors(sender))
+        #     if refresh or not neighbors:
+        #         print(neighbors, reward)
+        #         return reward
+            
+        #     action = random.choice(neighbors)
+        #     result = env.run(action=action)
+
+        #     reward += result.reward
+        #     state = result.state
+        #     sender = result.sender
+        #     refresh = result.refresh
+
+        # env = RandomEnvironement(physical_network = self._physical_network,
+        #                     virtual_network = state,
+        #                     sender_reciever_events= self._sr_events[self._sr_event_count:])
+        env = RandomEnvironement(physical_network = self._physical_network,
+                            virtual_network = state)
 
         reward = 0 
-        refresh = False
-        while True:
+        for __ in range(self._rollout_epochs):
+
             neighbors = list(state.neighbors(sender))
-            if refresh or not neighbors:
-                return reward
-            
-            action = random.choice(neighbors)
+            if not neighbors:
+                action = sender
+            else:
+                action = random.choice(neighbors)
+
             result = env.run(action= action)
 
             reward += result.reward
             state = result.state
             sender = result.sender
-            refresh = result.refresh
-
-        # else:
-        #     env = RandomEnvironement(physical_network = self._physical_network,
-        #                         virtual_network = state,
-        #                         sender_reciever_events= self._sr_events[self._sr_event_count:])
-
-        #     reward = 0 
-        #     for __ in range(self._rollout_epochs):
-
-        #         neighbors = list(state.neighbors(sender))
-        #         if not neighbors:
-        #             action = sender
-        #         else:
-        #             action = random.choice(neighbors)
-
-        #         result = env.run(action= action)
-
-        #         reward += result.reward
-        #         state = result.state
-        #         sender = result.sender
-
-        #     return reward
+        # print(reward)
+        return reward
     
     def expand(self, state: Graph, sender: int, node:int) -> None:
         """ Expand the Monte Carlo tree"""
@@ -128,7 +139,11 @@ class MCTSAgent(Agent):
             Q[s]= self._tree.Q(s)
         return self._tree.action(max(Q, key=Q.get))
 
-    def _run(self, state: Graph, sender: int, reciever: int, reward: float, success: Optional[bool] = False):
+    def _run(self, state: Graph, 
+                sender: int, 
+                reciever: int, 
+                reward: float, 
+                success: Optional[bool]=False):
 
         if success:
             self._sr_event_count += 1

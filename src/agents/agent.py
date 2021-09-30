@@ -33,7 +33,7 @@ class Agent(ABC):
         self._physical_network = physical_network
         self._virtual_init_network = virtual_network
 
-    def run(self, state: Graph, sender: int, reciever: int, reward: Optional[float]= None, success: Optional[bool]=None):
+    def run(self, state: Graph, sender: int, reciever: int, reward: Optional[float]=None, success: Optional[bool]=None):
         """Execute the policy with selected Environement for given State and Action.
         Args:
             state: current state of the virtual network.
@@ -48,7 +48,7 @@ class Agent(ABC):
             raise ValueError("A sender and/or a reciever"
                             "must be supplied to run the agent.")
                             
-        return self._run(state, sender, reciever, reward)
+        return self._run(state, sender, reciever, reward, success)
 
     @abstractmethod
     def _run(self, state: Graph, sender: int, reciever: int, reward: Optional[float]=None) -> int:
