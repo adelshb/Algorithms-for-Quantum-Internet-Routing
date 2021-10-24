@@ -1,4 +1,4 @@
-# Quantum Internet Routing
+# Algorithms for Quantum Internet Routing
 Different implementation of algorithms (greedy, shortest path, Monte Carlo Tree Search, SARSA, etc..) for Quantum Internet Routing. Still under construction...
 
 ## Requirements
