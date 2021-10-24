@@ -75,8 +75,6 @@ class MCTSAgent(Agent):
             sr_events = self._sr_events[self._sr_event_count:]
             sr_events[0] = (sender, self._sr_events[self._sr_event_count][1])
 
-            
-
             env = RandomEnvironement(physical_network = self._physical_network,
                                 virtual_network = state,
                                 sender_reciever_events= sr_events)

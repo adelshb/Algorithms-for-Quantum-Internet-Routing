@@ -13,119 +13,99 @@
 """Benchmark of different Agents"""
 
 from argparse import ArgumentParser
-from datetime import datetime
-import uuid
-
-from tqdm.contrib.concurrent import process_map
-
-import json
-import os
 
 import numpy as np
+import random
+import networkx as nx
+
+from networks.cycle import cycle_net
 
 from environements.random import RandomEnvironement
 
-from agents.random import RandomNeighborsAgent
+from agents.mcts.agent import MCTSAgent
 from agents.greed_routing_agent import GreedyNeighborsAgent
-from agents.sarsa import SARSAAgent
+from agents.shortest_path import ShortestPathAgent
 
-from networks.cycle import cycle_net
-# from networks.random import random_net
-# from networks.random_geom import random_net
-
-def benchmark(args):
-        
-    # Generate random network
-    n = np.random.randint(args.nmin, args.nmax+1)
-
-    # dth = np.random.randint(1, args.dthmax+1)
-    dth=4
-    C, Q = cycle_net(n= n, dth= dth)
+def main(args):
     
-    DATA = {}
-    DATA["physical network"] = {}
-    DATA["physical network"]["nodes"] = list(C.nodes())
-    DATA["physical network"]["edges"] = list(C.edges())
-    DATA["virtual network"] = {}
-    DATA["virtual network"]["nodes"] = list(Q.nodes())
-    DATA["virtual network"]["edges"] = list(Q.edges())
+    # Preparing the benchmark settings
+    C, Q = cycle_net(n=args.n, dth=args.dth)
+
+    paths = []
+    nodes = list(C.nodes)
+    for n in nodes:
+        nodes.remove(n)
+        for t in nodes:
+            try:
+                paths.append(list(nx.all_simple_paths(C, source=n, target=t)))
+            except:
+                pass
+    paths = [j for i in paths for j in i]
+
+    v = np.random.rand(len(paths))
+    prob_dist = v / np.linalg.norm(v)
+
+    sr_events = []
+    for __ in range(100):
+        path = random.choices(paths, prob_dist)[0]
+        sr_events.append((path[0], path[-1]))
 
 
-    #### Random Agent ###
+    # MCTS
     env = RandomEnvironement(physical_network = C, 
-                                virtual_network = Q)
-    agent = RandomNeighborsAgent(physical_network = C, 
-                                virtual_network = Q)
+                                virtual_network = Q,
+                                sender_reciever_events= sr_events)
 
-    R = run_experiment(env, agent, args.epochs)
-    DATA['random-agent'] = R
+    agent = MCTSAgent(physical_network= C,
+                     virtual_network = Q,
+                     N = args.mcts_sim_num,
+                     c = args.c_ucb1)
 
-    #### Greedy Neighbnors Agent ###
+    R = run_experiment(env, agent, epochs=args.epochs)
+    print("MCTS (no knowledge): ", R[-1])
+
+    # MCTS with Schedule
     env = RandomEnvironement(physical_network = C, 
-                                virtual_network = Q)
-    agent = GreedyNeighborsAgent(physical_network = C, 
-                                virtual_network = Q)
+                                    virtual_network = Q,
+                                    sender_reciever_events= sr_events)
 
-    R = run_experiment(env, agent, args.epochs)
-    DATA['greedy-neighbors-agent'] = R
+    agent = MCTSAgent(physical_network= C,
+                    virtual_network = Q,
+                    sender_reciever_events= sr_events,
+                    N = args.mcts_sim_num,
+                    c = args.c_ucb1)
 
-    # #### SARSA ####
+    R = run_experiment(env, agent, epochs=args.epochs)
+    print("MCTS (schedule knowledge): ", R[-1])
 
-    e=0.5
-    a=0.5
-    y=0.5
-    D = {}
-    D['param'] = {}
-    D['param']['epsilon'] = e 
-    D['param']['alpha'] = a 
-    D['param']['gamma'] = y
+    # Greedy
     env = RandomEnvironement(physical_network = C, 
-                                virtual_network = Q)
-    agent = SARSAAgent(physical_network = C, 
-                virtual_network = Q,
-                epsilon = e,
-                alpha = a,
-                gamma = y)
+                                    virtual_network = Q,
+                                    sender_reciever_events= sr_events)
 
-    R = run_experiment(env, agent, args.epochs)
-    D['reward'] = R
-    SARSA = []
-    SARSA.append(D)
- 
-    # for e in np.arange(0, 1+args.delta, args.delta):
-    #     for a in np.arange(0, 1+args.delta, args.delta):
-    #         for y in np.arange(0, 1+args.delta, args.delta):
+    agent = GreedyNeighborsAgent(physical_network= C,
+                    virtual_network = Q)
 
-    #             D = {}
-    #             D['param'] = {}
-    #             D['param']['epsilon'] = e 
-    #             D['param']['alpha'] = a 
-    #             D['param']['gamma'] = y 
+    R = run_experiment(env, agent, epochs=args.epochs)
+    print("Greedy: ", R[-1])
 
-    #             env = RandomEnvironement(physical_network = C, 
-    #                             virtual_network = Q)
-    #             agent = SARSAAgent(physical_network = C, 
-    #                         virtual_network = Q,
-    #                         epsilon = e,
-    #                         alpha = a,
-    #                         gamma = y)
+    # Shortest Path
+    env = RandomEnvironement(physical_network = C, 
+                                    virtual_network = Q,
+                                    sender_reciever_events= sr_events)
 
-    #             R = run_experiment(env, agent, args.epochs)
-    #             D['reward'] = R
-    #             SARSA.append(D)
+    agent = ShortestPathAgent(physical_network= C,
+                    virtual_network = Q)
 
-    DATA['sarsa'] = SARSA
-
-    # Save data
-    with open(args.savepath + '{}.json'.format(uuid.uuid4().hex), 'w') as fp:
-        json.dump(DATA, fp)
+    R = run_experiment(env, agent, epochs=args.epochs)
+    print("Shortest Path: ", R[-1])
 
 def run_experiment(env, agent, epochs):
 
     state = env._state
     sender = env._sender
     reciever = env._reciever
-    R = []
+    R = []    
 
     r = 0
     for __ in range(epochs):
@@ -133,8 +113,8 @@ def run_experiment(env, agent, epochs):
         if __ == 0:
             action = agent.run(state= state, sender= sender, reciever= reciever)
         else:
-            action = agent.run(state= state, sender= sender, reciever= reciever, reward= result.reward)
-        
+            action = agent.run(state= state, sender= sender, reciever= reciever, reward= result.reward, success=success)
+
         # State evolution and compute reward
         result = env.run(action= action)
         
@@ -142,6 +122,7 @@ def run_experiment(env, agent, epochs):
         state = result.state
         sender = result.sender
         reciever = result.reciever
+        success = result.success
         
         r += result.reward
         R.append(r)
@@ -150,28 +131,16 @@ def run_experiment(env, agent, epochs):
 if __name__ == "__main__":
     parser = ArgumentParser()
 
-    # Experiments 
-    parser.add_argument("--experiments", type=int, default=10000)
-    parser.add_argument("--epochs", type=int, default=200)
-
-    # Agent
-    parser.add_argument("--delta", type=float, default=0.1)
+    # Benchmark 
+    parser.add_argument("--epochs", type=int, default=50)
     
     # Network
-    parser.add_argument("--nmin", type=int, default=5)
-    parser.add_argument("--nmax", type=int, default=30)
-    parser.add_argument("--dthmax", type=int, default=5)
+    parser.add_argument("--n", type=int, default=12)
+    parser.add_argument("--dth", type=int, default=3)
 
-    # Saving data
-    parser.add_argument("--savepath", type=str, default="data/benchmark/") 
-
-    # Multiprocessing
-    parser.add_argument("--num_cpu", type=int, default=4) 
+    # MCTS
+    parser.add_argument("--mcts_sim_num", type=int, default=2000)
+    parser.add_argument("--c_ucb1", type=float, default=2.0)
 
     args = parser.parse_args()
-
-    args.savepath += datetime.now().strftime("%Y%m%d%H%M%S")+"/"
-    if not os.path.isdir(args.savepath):
-        os.makedirs(args.savepath)
-
-    process_map(benchmark, [args]*args.experiments, max_workers=args.num_cpu)
+    main(args)
